@@ -48,6 +48,20 @@ class pQuery {
 	static $accepts = array('boolean', 'integer', 'double', 'string', 'array', 'object', 'NULL');
 	
 	/**
+	 * A list of names of plugins that are required to run a plugin.
+	 * 
+	 * @var array
+	 */
+	static $require_plugins = array();
+	
+	/**
+	 * Aliases for the variable setter and getter.
+	 * 
+	 * @var string|array
+	 */
+	static $variable_alias = array();
+	
+	/**
 	 * The current variable.
 	 * 
 	 * @var mixed
@@ -129,35 +143,6 @@ class pQuery {
 	}
 	
 	/**
-	 * Parse the type of the given variable, and convert it if needed.
-	 * 
-	 * @param mixed $variable The variable to parse.
-	 * @param bool $force Whether not to check the variables type against the accepted types.
-	 */
-	function set_variable($variable, $force=false) {
-		$this->variable = $variable;
-		
-		if( $force )
-			return;
-		
-		$type = gettype($variable);
-		$class_name = get_class($this);
-		$accepts = $class_name::$accepts;
-		
-		if( isset($accepts[$type]) ) {
-			$convert_method = $accepts[$type];
-			
-			if( !method_exists($this, $convert_method) )
-				return self::error('Plugin "%s" has no conversion method "%s".', $class_name, $convert_method);
-			
-			$result = $this->$convert_method($variable);
-			$result === null || $this->variable = $result;
-		} else if( !in_array($type, $accepts) ) {
-			return self::error('Variable type "%s" is not accepted by class "%s".', $type, $class_name);
-		}
-	}
-	
-	/**
 	 * Try to load the file containing the utility class for a specific variable type.
 	 * 
 	 * @param mixed $type the variable type of the class to load.
@@ -189,6 +174,59 @@ class pQuery {
 			
 			include_once $path;
 		}
+	}
+	
+	/**
+	 * Parse the type of the given variable, and convert it if needed.
+	 * 
+	 * @param mixed $variable The variable to parse.
+	 * @param bool $force Whether not to check the variables type against the accepted types.
+	 */
+	function set_variable($variable, $force=false) {
+		$this->variable = $variable;
+		
+		if( $force )
+			return;
+		
+		$type = gettype($variable);
+		$class_name = get_class($this);
+		$accepts = $class_name::$accepts;
+		
+		if( isset($accepts[$type]) ) {
+			$convert_method = $accepts[$type];
+			
+			if( !method_exists($this, $convert_method) )
+				return self::error('Plugin "%s" has no conversion method "%s".', $class_name, $convert_method);
+			
+			$result = $this->$convert_method($variable);
+			$result === null || $this->variable = $result;
+		} else if( !in_array($type, $accepts) ) {
+			return self::error('Variable type "%s" is not accepted by class "%s".', $type, $class_name);
+		}
+	}
+	
+	/**
+	 * Getter for {@link variable}.
+	 * 
+	 * @see variable_alias
+	 */
+	function __get($name) {
+		$class_name = get_class($this);
+		
+		if( in_array($name, (array)$class_name::$variable_alias) )
+			return $this->variable;
+	}
+	
+	/**
+	 * Setter for {@link variable}.
+	 * 
+	 * @see variable_alias
+	 */
+	function __set($name, $value) {
+		$class_name = get_class($this);
+		
+		if( in_array($name, (array)$class_name::$variable_alias) )
+			$this->variable = $value;
 	}
 }
 
@@ -231,6 +269,9 @@ function _p($variable, $plugin=null) {
 	return new $class_name($variable);
 }
 
+/**
+ * Set an alias for the bas class consistent with plugin aliases.
+ */
 class_alias('pQuery', '__p');
  
 ?>

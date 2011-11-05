@@ -22,6 +22,12 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	static $link;
 	
 	/**
+	 * @see pQuery::$variable_alias
+	 * @var string|array
+	 */
+	static $variable_alias = 'query';
+	
+	/**
 	 * The result of the current query.
 	 * 
 	 * @var resource|bool
@@ -156,22 +162,6 @@ class pQuerySql extends pQuery implements pQueryExtension {
 		return $results;
 		
 		return $func($this->result);
-	}
-	
-	/**
-	 * Getter for property 'query'.
-	 */
-	function __get($name) {
-		if( $name == 'query' )
-			return $this->variable;
-	}
-	
-	/**
-	 * Setter for property 'query'.
-	 */
-	function __set($name, $value) {
-		if( $name == 'query' )
-			$this->variable = $value;
 	}
 	
 	/**
