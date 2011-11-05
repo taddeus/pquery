@@ -14,7 +14,8 @@
 define('DEBUG', true);
 
 /**
- * The root location of the pQuery framework folder, used for file inclusions.
+ * The root location of the pQuery framework folder, used for file
+ * inclusions. The path is absolute and should end with a slash ('/').
  * 
  * @var string
  */
@@ -31,7 +32,7 @@ define('ERROR_IS_FATAL', true);
 /**
  * Abstract class containing plugin configs.
  */
-abstract class Config {
+abstract class pQueryConfig {
 	/**
 	 * Config for MySQL plugin.
 	 * 

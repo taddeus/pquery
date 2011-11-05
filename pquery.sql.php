@@ -181,11 +181,11 @@ class pQuerySql extends pQuery implements pQueryExtension {
 		if( self::$link )
 			return;
 		
-		if( !isset(Config::$sql) )
+		if( !isset(pQueryConfig::$sql) )
 			return self::error('Could not connect to database: no MySQL config found.');
 		
 		// Connect to the database
-		$c = Config::$sql;
+		$c = pQueryConfig::$sql;
 		$link = @mysql_connect($c['host'], $c['username'], $c['password']);
 		
 		if( $link === false )
