@@ -1,6 +1,6 @@
 <?php
 /**
- * pQuery extention for executing common array functions.
+ * pQuery plugin for executing common array functions.
  * 
  * @package pQuery
  */

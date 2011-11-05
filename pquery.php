@@ -5,18 +5,25 @@
  * @package pQuery
  */
 
-include_once 'config.php';
+include_once 'pquery.config.php';
 
 /**
  * Common utility class.
  */
 class pQuery {
 	/**
-	 * Pattern of tha alias created for an extending plugin that has defined an alias.
+	 * Pattern of the alias created for an extending plugin that has defined an alias.
 	 * 
 	 * @var string
 	 */
 	const CLASS_ALIAS_PATTERN = '__%s';
+	
+	/**
+	 * Pattern of a plugin's filename.
+	 * 
+	 * @var string
+	 */
+	const PLUGIN_FILENAME_PATTERN = 'pquery.%s.php';
 	
 	/**
 	 * The minimum php version required to use the framework.
@@ -156,12 +163,12 @@ class pQuery {
 	 * @param mixed $type the variable type of the class to load.
 	 */
 	static function load_plugin($type) {
-		$file = PQUERY_ROOT.$type.'.php';
+		$path = PQUERY_ROOT.sprintf(self::PLUGIN_FILENAME_PATTERN, $type);
 		
-		if( !file_exists($file) )
+		if( !file_exists($path) )
 			return false;
 		
-		include_once $file;
+		include_once $path;
 		
 		return true;
 	}
@@ -173,7 +180,7 @@ class pQuery {
 		$plugins = func_get_args();
 		
 		foreach( $plugins as $plugin ) {
-			$path = PQUERY_ROOT.$plugin.'.php';
+			$path = PQUERY_ROOT.sprintf(self::PLUGIN_FILENAME_PATTERN, $plugin);
 			
 			if( !file_exists($path) ) {
 				return self::error('Required plugin "%s" could not be located (looked in "%s").',
@@ -223,5 +230,7 @@ function _p($variable, $plugin=null) {
 	
 	return new $class_name($variable);
 }
+
+class_alias('pQuery', '__p');
  
 ?>

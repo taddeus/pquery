@@ -1,6 +1,6 @@
 <?php
 /**
- * pQuery extention for executing MySQL queries.
+ * pQuery plugin for executing MySQL queries.
  * 
  * @package pQuery
  */

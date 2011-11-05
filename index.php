@@ -1,8 +1,8 @@
 <?php
 
 include_once '../debug.php';
-include_once 'base.php';
-pQuery::require_plugins('array', 'sql');
+include_once 'pquery.php';
+__p::require_plugins('array', 'sql');
 
 // Array test
 /*$a = _p(range(0, 10));

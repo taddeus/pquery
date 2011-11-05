@@ -1,6 +1,6 @@
 <?php
 /**
- * Base and extention config for pQuery utility framework.
+ * Base and plugin config for pQuery utility framework.
  * 
  * @package pQuery
  */
@@ -29,11 +29,11 @@ define('PQUERY_ROOT', 'D:/xampp/htdocs/pquery/');
 define('ERROR_IS_FATAL', true);
 
 /**
- * Abstract class containing extention configs.
+ * Abstract class containing plugin configs.
  */
 abstract class Config {
 	/**
-	 * Config for MySQL extention.
+	 * Config for MySQL plugin.
 	 * 
 	 * @var array
 	 */
