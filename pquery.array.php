@@ -47,8 +47,7 @@ class pQueryArray extends pQuery implements pQueryExtension {
 /**
  * Shortcut constructor for {@link pQueryArray}.
  * 
- * @returns pQuerySql A new pQuerySql instance.
- * @see pQuerySql::__construct
+ * @returns pQueryArray A new pQueryArray instance.
  */
 function _arr($array) {
 	return pQuery::create('array', $array);
