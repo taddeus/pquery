@@ -5,24 +5,19 @@
  * @package pQuery
  */
 
-/**
- * Indicates whether the framework is in debug mode.
- * 
- * @var bool
- */
-defined('DEBUG') || define('DEBUG', true);
-
-/**
- * The root location of the pQuery framework folder.
- * 
- * @var string
- */
-define('PQUERY_ROOT', 'D:/xampp/htdocs/pquery/');
+include_once 'config.php';
 
 /**
  * Common utility class.
  */
 class pQuery {
+	/**
+	 * Pattern of tha alias created for an extending plugin that has defined an alias.
+	 * 
+	 * @var string
+	 */
+	const CLASS_ALIAS_PATTERN = '__%s';
+	
 	/**
 	 * The minimum php version required to use the framework.
 	 * 
@@ -53,6 +48,13 @@ class pQuery {
 	var $variable;
 	
 	/**
+	 * Additional arguments that were passed to the constructor.
+	 * 
+	 * @var array
+	 */
+	var $arguments = array();
+	
+	/**
 	 * Extend pQuery with a plugin.
 	 * 
 	 * @param string $class_name The name of the plugin's base class.
@@ -75,7 +77,12 @@ class pQuery {
 				$class_name, $class_name::$REQUIRED_PHP_VERSION);
 		}
 		
-		self::$plugins[$alias === null ? $class_name : $alias] = $class_name;
+		if( $alias === null ) {
+			self::$plugins[$class_name] = $class_name;
+		} else {
+			self::$plugins[$alias] = $class_name;
+			class_alias($class_name, sprintf(self::CLASS_ALIAS_PATTERN, $alias));
+		}
 	}
 	
 	/**
@@ -92,15 +99,26 @@ class pQuery {
 			call_user_func_array('printf', $args);
 			//echo debug_backtrace();
 		}
+		
+		ERROR_IS_FATAL && exit;
 	}
 	
 	/**
 	 * Constructor.
 	 * 
+	 * @param string $class_name The class to constuct an object off.
 	 * @param mixed $variable The variable to use an utility on.
 	 */
-	function __construct($variable) {
-		$this->set_variable($variable);
+	static function create() {
+		$args = func_get_args();
+		$class_name = array_shift($args);
+		$obj = $class_name === null ? new self() : new $class_name();
+		$variable = array_shift($args);
+		
+		$obj->arguments = $args;
+		$obj->set_variable($variable);
+		
+		return $obj;
 	}
 	
 	/**
@@ -110,33 +128,34 @@ class pQuery {
 	 * @param bool $force Whether not to check the variables type against the accepted types.
 	 */
 	function set_variable($variable, $force=false) {
-		if( !$force ) {
-			$type = gettype($variable);
-			$class_name = get_class($this);
-			$accepts = $class_name::$accepts;
-			
-			if( isset($accepts[$type]) ) {
-				$convert_method = $accepts[$type];
-				
-				if( !method_exists($this, $convert_method) )
-					return self::error('Plugin "%s" has no conversion method "%s".', $class_name, $convert_method);
-				
-				$result = $this->$convert_method($variable);
-				$result === null || $variable = $result;
-			} else if( !in_array($type, $accepts) ) {
-				return self::error('Variable type "%s" is not accepted by class "%s".', $type, $class_name);
-			}
-		}
-		
 		$this->variable = $variable;
+		
+		if( $force )
+			return;
+		
+		$type = gettype($variable);
+		$class_name = get_class($this);
+		$accepts = $class_name::$accepts;
+		
+		if( isset($accepts[$type]) ) {
+			$convert_method = $accepts[$type];
+			
+			if( !method_exists($this, $convert_method) )
+				return self::error('Plugin "%s" has no conversion method "%s".', $class_name, $convert_method);
+			
+			$result = $this->$convert_method($variable);
+			$result === null || $this->variable = $result;
+		} else if( !in_array($type, $accepts) ) {
+			return self::error('Variable type "%s" is not accepted by class "%s".', $type, $class_name);
+		}
 	}
 	
 	/**
-	 * Load the file containing the utility class for a specific variable type.
+	 * Try to load the file containing the utility class for a specific variable type.
 	 * 
-	 * @param mixed $typoe the variable type of the class to load.
+	 * @param mixed $type the variable type of the class to load.
 	 */
-	static function load_type_class($type) {
+	static function load_plugin($type) {
 		$file = PQUERY_ROOT.$type.'.php';
 		
 		if( !file_exists($file) )
@@ -145,6 +164,24 @@ class pQuery {
 		include_once $file;
 		
 		return true;
+	}
+	
+	/**
+	 * Include the nescessary files for the given plugins.
+	 */
+	static function require_plugins(/* $plugin1 [ , $plugin2, ... ] */) {
+		$plugins = func_get_args();
+		
+		foreach( $plugins as $plugin ) {
+			$path = PQUERY_ROOT.$plugin.'.php';
+			
+			if( !file_exists($path) ) {
+				return self::error('Required plugin "%s" could not be located (looked in "%s").',
+					$plugin, $path);
+			}
+			
+			include_once $path;
+		}
 	}
 }
 
@@ -157,7 +194,7 @@ interface pQueryExtension {
 	 * 
 	 * @param mixed $variable The variable to use an utility on.
 	 */
-	function __construct($variable);
+	//function __construct();
 }
 
 /**
@@ -174,7 +211,7 @@ function _p($variable, $plugin=null) {
 		// Use custom class for this variable type
 		$type = gettype($variable);
 		
-		if( pQuery::load_type_class($type) )
+		if( pQuery::load_plugin($type) )
 			$class_name .= ucfirst($type);
 	} else {
 		// Use custom plugin class
