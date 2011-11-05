@@ -22,17 +22,17 @@ define('DEBUG', true);
 define('PQUERY_ROOT', 'D:/xampp/htdocs/pquery/');
 
 /**
- * Indicates whether errors occuring in the framework will
- * terminate the script.
- * 
- * @var bool
- */
-define('ERROR_IS_FATAL', true);
-
-/**
  * Abstract class containing plugin configs.
  */
 abstract class pQueryConfig {
+	/**
+	 * Indicates whether errors occuring in the framework will
+	 * terminate the script.
+	 * 
+	 * @var bool
+	 */
+	const ERROR_IS_FATAL = true;
+	
 	/**
 	 * Config for MySQL plugin.
 	 * 

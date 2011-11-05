@@ -121,7 +121,7 @@ class pQuery {
 			//echo debug_backtrace();
 		}
 		
-		ERROR_IS_FATAL && exit;
+		pQueryConfig::ERROR_IS_FATAL && exit;
 	}
 	
 	/**
