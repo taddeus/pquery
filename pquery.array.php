@@ -51,7 +51,7 @@ class pQueryArray extends pQuery implements pQueryExtension {
  * @see pQuerySql::__construct
  */
 function _arr($array) {
-	return pQuery::create('pQueryArray', $array);
+	return pQuery::create('array', $array);
 }
 
 pQuery::extend('pQueryArray', 'array');

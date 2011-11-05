@@ -113,11 +113,11 @@ class pQuery {
 	 * 
 	 * @param string $error The error message to display.
 	 */
-	static function error($error/*, $arg1, $arg2...*/) {
+	static function error($error /* , $arg1, $arg2... */) {
 		$args = func_get_args();
 		
 		if( DEBUG ) {
-			call_user_func_array('printf', $args);
+			echo nl2br(call_user_func_array('sprintf', $args));
 			//echo debug_backtrace();
 		}
 		
@@ -132,12 +132,20 @@ class pQuery {
 	 */
 	static function create() {
 		$args = func_get_args();
-		$class_name = array_shift($args);
-		$obj = $class_name === null ? new self() : new $class_name();
-		$variable = array_shift($args);
+		$plugin = array_shift($args);
 		
+		if( $plugin === null )
+			$class_name = 'self';
+		elseif( isset(self::$plugins[$plugin]) )
+			$class_name = self::$plugins[$plugin];
+		elseif( in_array($plugin, self::$plugins) )
+			$class_name = $plugin;
+		else
+			return self::error('Plugin "%s" does not exist.', $plugin);
+		
+		$obj = new $class_name();
 		$obj->arguments = $args;
-		$obj->set_variable($variable);
+		$obj->set_variable(array_shift($args));
 		
 		return $obj;
 	}

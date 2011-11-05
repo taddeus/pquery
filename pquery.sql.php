@@ -236,13 +236,13 @@ class pQuerySql extends pQuery implements pQueryExtension {
 /**
  * Shortcut constructor for {@link pQuerySql}.
  * 
- * @returns pQuerySql A new pQuerySql instance.
- * @see pQuerySql::__construct
+ * @param string $query A MySQL query to evaluate.
+ * @returns pQuerySql A new SQL query instance.
  */
 function _sql($query /* [ , $arg1, ... ] */) {
 	$args = func_get_args();
 	$query = array_shift($args);
-	array_unshift($args, 'pQuerySql', $query);
+	array_unshift($args, 'sql', $query);
 	
 	return call_user_func_array('pQuery::create', $args);
 }
