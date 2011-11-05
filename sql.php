@@ -7,7 +7,7 @@
 
 /**
  * @todo Documentation
- * @property query Alias for {@link pQuery::variable}.
+ * @property $query Alias for {@link pQuery::variable}.
  */
 class pQuerySql extends pQuery implements pQueryExtension {
 	const VARIABLE_PATTERN = '/\[\s*%s\s*\]/';
@@ -58,7 +58,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * 
 	 * @param array $variables The variables to replace.
 	 * @param bool $escape Whether to escape the variable values.
-	 * @returns pQuerySql The current object.
+	 * @returns pQuerySql The current query object.
 	 */
 	function replace_variables($variables, $escape) {
 		$patterns = array_map('pQuerySql::variable_pattern', array_keys($variables));
@@ -73,7 +73,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * Replace a set of variables with their escaped values in the current query.
 	 * 
 	 * @param array $variables The variables to replace.
-	 * @returns pQuerySql The current object.
+	 * @returns pQuerySql The current query object.
 	 */
 	function set($variables) {
 		return $this->replace_variables($variables, true);
@@ -83,7 +83,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * Replace a set of variables with their non-escaped values in the current query.
 	 * 
 	 * @param array $variables The variables to replace.
-	 * @returns pQuerySql The current object.
+	 * @returns pQuerySql The current query object.
 	 */
 	function set_plain($variables) {
 		return $this->replace_variables($variables, false);
@@ -103,7 +103,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	/**
 	 * Execute the current query.
 	 * 
-	 * @returns pQuerySql The current object.
+	 * @returns pQuerySql The current query object.
 	 */
 	function execute() {
 		self::assert_connection();
@@ -159,7 +159,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	}
 	
 	/**
-	 * Getter for property {@link query}.
+	 * Getter for property 'query'.
 	 */
 	function __get($name) {
 		if( $name == 'query' )
@@ -167,7 +167,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	}
 	
 	/**
-	 * Setter for property {@link query}.
+	 * Setter for property 'query'.
 	 */
 	function __set($name, $value) {
 		if( $name == 'query' )
@@ -184,7 +184,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	/**
 	 * Assert that the MySQL connection is opened.
 	 * 
-	 * @uses mysql_connect, mysql_select_db
+	 * @uses mysql_connect,mysql_select_db
 	 */
 	static function assert_connection() {
 		// Return if the connection has already been opened
