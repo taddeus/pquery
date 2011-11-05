@@ -9,20 +9,44 @@
  * @todo Documentation
  */
 class pQueryArray extends pQuery implements pQueryExtension {
+	/**
+	 * Get the value of an array alement at the given index.
+	 * 
+	 * @param int|string $index The index to get the element of.
+	 * @returns mixed The array value at the given index if it exists, or NULL otherwise.
+	 */
 	function get($index) {
 		return isset($this->variable[$index]) ? $this->variable[$index] : null;
 	}
 	
+	/**
+	 * Check if the array is empty.
+	 * 
+	 * @returns bool Whether the array is empty.
+	 */
 	function is_empty() {
 		return !$this->count();
 	}
 	
+	/**
+	 * Reverse the array.
+	 * 
+	 * @returns pQueryArray The current object.
+	 */
 	function reverse() {
 		$this->variable = array_reverse($this->variable);
 		
 		return $this;
 	}
 	
+	/**
+	 * Execute an existing array function on the array.
+	 * 
+	 * @var $method string A (part of the) function name to execute.
+	 * @var method $args Additional arguments to pass to the called function.
+	 * @returns mixed Either the current object, or the return value
+	 *                of the called array function.
+	 */
 	function __call($method, $args) {
 		$function = 'array_'.$method;
 		
