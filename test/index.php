@@ -1,7 +1,7 @@
 <?php
 
-include_once '../debug.php';
-include_once 'pquery.php';
+include_once '../../debug.php';
+include_once '../pquery.php';
 __p::require_plugins('array', 'sql', 'template');
 
 // Array test
@@ -19,7 +19,7 @@ $results = _arr($results);
 
 debug($results);*/
 
-__tpl::set_root('templates');
+__tpl::set_root('templates', false);
 $tpl = _tpl('test.tpl');
 
 debug($tpl->content);

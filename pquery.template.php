@@ -56,7 +56,7 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 	 */
 	static function set_root($path, $relative=true) {
 		self::$include_path = array();
-		self::add_root($path);
+		self::add_root($path, $relative);
 	}
 	
 	/**
