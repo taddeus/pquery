@@ -34,6 +34,13 @@ abstract class pQueryConfig {
 	const ERROR_IS_FATAL = true;
 	
 	/**
+	 * Name of the utilities folder
+	 * 
+	 * @var string
+	 */
+	const UTILS_FOLDER = 'utils/';
+	
+	/**
 	 * Config for MySQL plugin.
 	 * 
 	 * @var array

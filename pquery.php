@@ -151,9 +151,25 @@ class pQuery {
 	}
 	
 	/**
+	 * Try to load an utility file.
+	 * 
+	 * @param string $basename 
+	 */
+	static function load_util($basename) {
+		$path = PQUERY_ROOT.pQueryConfig::UTILS_FOLDER.$basename.'.php';
+		
+		if( !file_exists($path) ) {
+			return self::error('Utility "%s" could not be loaded (looked in "%s").',
+				$basename, $path);
+		}
+		
+		include_once $path;
+	}
+	
+	/**
 	 * Try to load the file containing the utility class for a specific variable type.
 	 * 
-	 * @param mixed $type the variable type of the class to load.
+	 * @param string $type the variable type of the class to load.
 	 */
 	static function load_plugin($type) {
 		$path = PQUERY_ROOT.sprintf(self::PLUGIN_FILENAME_PATTERN, $type);

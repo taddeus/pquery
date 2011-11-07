@@ -5,9 +5,11 @@
  * @package pQuery
  */
 
+__p::load_util('block');
+
 /**
  * @todo Documentation
- * @property $ Alias for {@link pQuery::variable}.
+ * @property string $content The template's content.
  */
 class pQueryTemplate extends pQuery implements pQueryExtension {
 	static $accepts = array('string' => 'open_template_file');
@@ -23,7 +25,32 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 	 * @see pQuery::$variable_alias
 	 * @var string|array
 	 */
-	static $variable_alias = 'template';
+	static $variable_alias = 'content';
+	
+	/**
+	 * The path the template was found in.
+	 * 
+	 * @var string
+	 */
+	var $path;
+	
+	/**
+	 * Nested variable values.
+	 * 
+	 * @var Block
+	 */
+	var $data;
+	
+	/**
+	 * Constructor
+	 * 
+	 * Create a new nested data block object for variable values.
+	 * 
+	 * @see data
+	 */
+	function __construct() {
+		$this->data = new Block();
+	}
 	
 	/**
 	 * Open the given template filename in the current variable.
@@ -35,17 +62,152 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 			$path = $root.$this->variable;
 			
 			if( is_file($path) ) {
-				$found = true;
-				break;
+				$this->path = $path;
+				$this->content = file_get_contents($path);
+				return;
 			}
 		}
 		
-		if( !$found ) {
-			return self::error("Could not find template file \"%s\", looked in folders:\n%s",
-				$this->variable, implode("\n", self::$include_path));
+		self::error("Could not find template file \"%s\", looked in folders:\n%s",
+			$this->variable, implode("\n", self::$include_path));
+	}
+	
+	/**
+	 * Replace blocks and variables in the template's content.
+	 * 
+	 * @returns string The template's content, with replaced variables.
+	 */
+	function parse() {
+		$lines = array('-');
+		$index = 0;
+		
+		// Loop through the content character by character
+		for( $i = 0, $l = strlen($this->content); $i < $l; $i++ ) {
+			$c = $this->content[$i];
+			
+			if( $c == '{' ) {
+				// Possible variable container found, add marker
+				$lines[] = '+';
+				$index++;
+			} elseif( $c == '}' ) {
+				// Variable container closed, add closure marker
+				$lines[] = '-';
+				$index++;
+			} else {
+				// Add character to the last line
+				$lines[$index] .= $c;
+			}
 		}
 		
-		$this->content = file_get_contents($path);
+		$line_count = 1;
+		$block = $root = new Block;
+		$block->children = array();
+		$in_block = false;
+		
+		// Loop through the parsed lines, building the block tree
+		foreach( $lines as $line ) {
+			$marker = $line[0];
+			
+			if( $marker == '+' ) {
+				if( strpos($line, 'block:') === 1 ) {
+					// Block start
+					$block = $block->add('block', array('name' => substr($line, 7)));
+				} elseif( strpos($line, 'end') === 1 ) {
+					// Block end
+					if( $block->parent === null ) {
+						return self::error('Unexpected "{end}" at line %d in template "%s".',
+							$line_count, $this->path);
+					}
+					
+					$block = $block->parent;
+				} else {
+					// Variable enclosure
+					$block->add('variable', array('content' => substr($line, 1)));
+				}
+			} else {
+				$block->add('', array('content' => substr($line, 1)));
+			}
+			
+			// Count lines for error messages
+			$line_count += substr_count($line, "\n");
+		}
+		
+		// Use recursion to parse all blocks from the root level
+		return self::parse_block($root, $this->data);
+	}
+	
+	/**
+	 * Replace a variable name if it exists within a given data scope.
+	 * 
+	 * Apply any of the following helper functions:
+	 * - Translation: {_:name[:count_var_name]}
+	 * - Default: <code>{var_name[:func1:func2:...]}</code>
+	 * 
+	 * @param string $variable The variable to replace.
+	 * @param Block $data The data block to search in for the value.
+	 * @returns string The variable's value if it exists, the original string otherwise.
+	 */
+	static function parse_variable($variable, $data) {
+		$parts = explode(':', $variable);
+		$name = $parts[0];
+		$parts = array_slice($parts, 1);
+		
+		switch( $name ) {
+			case '_':
+				// TODO: translations
+				return '--translation--';
+				break;
+			default:
+				$value = $data->get($name);
+				
+				// Don't continue if the variable name is not foudn in the data block
+				if( $value === null )
+					break;
+				
+				// Apply existing PHP functions to the variable's value
+				foreach( $parts as $func ) {
+					if( !is_callable($func) )
+						return self::error('Function "%s" does not exist.', $func);
+					
+					$value = $func($value);
+				}
+				
+				return $value;
+		}
+		
+		return '{'.$variable.'}';
+	}
+	
+	/**
+	 * Parse a single block, recursively parsing its sub-blocks with a given data scope.
+	 * 
+	 * @param Block $variable The block to parse.
+	 * @param Block $data the data block to search in for the variable values.
+	 * @returns string The parsed block.
+	 * @uses parse_variable
+	 */
+	static function parse_block($block, $data) {
+		$content = '';
+		
+		foreach( $block->children as $child ) {
+			switch( $child->name ) {
+				case 'block':
+					$block_name = $child->get('name');
+					
+					foreach( $data->find($block_name) as $block_data ) {
+						$content .= self::parse_block($child, $block_data);
+					}
+					
+					break;
+				case 'variable':
+					$content .= self::parse_variable($child->content, $data);
+					break;
+				default:
+					$content .= $child->content;
+			}
+		}
+		
+		return $content;
 	}
 	
 	/**
