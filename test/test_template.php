@@ -13,8 +13,11 @@ class pQueryTemplateTest extends UnitTestCase {
 	}
 	
 	function setUp() {
+		// Set root to tests/templates
 		$this->templates_folder = PQUERY_ROOT.'test/'.self::TEMPLATES_FOLDER;
 		__tpl::set_root($this->templates_folder, false);
+		
+		// Load the test template
 		$this->file = 'test.tpl';
 		$this->tpl = _tpl($this->file);
 	}
@@ -66,11 +69,15 @@ class pQueryTemplateTest extends UnitTestCase {
 	}
 	
 	function test_parse() {
-		$expected_content = file_get_contents($this->templates_folder.'expect_parse.txt');
+		// Add some blocks with test variables
 		$test1 = $this->tpl->data->add('test1', array('var' => 'some-variable'));
 		$this->tpl->data->add('test1', array('var' => 'some-other-variable'));
 		$test1->add('test2');
 		$this->tpl->data->add('test3');
+		
+		// Expected content is defined in a text file
+		$expected_content = file_get_contents($this->templates_folder.'expect_parse.txt');
+		
 		$this->assertEqual($this->tpl->parse(), $expected_content, 'parsed templated does not match expected content');
 	}
 }
