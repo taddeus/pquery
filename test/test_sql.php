@@ -1,6 +1,6 @@
 <?php
 
-class pQuerySqlTestCase extends UnitTestCase {
+class pQuerySqlTest extends UnitTestCase {
 	function test_() {
 		
 	}
