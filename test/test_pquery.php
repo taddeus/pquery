@@ -2,7 +2,7 @@
 
 class pQueryTest extends UnitTestCase {
 	function __construct() {
-		$this->UnitTestCase('pQuery base test');
+		parent::__construct('pQuery base');
 	}
 	
 	function test_() {

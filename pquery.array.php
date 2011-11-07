@@ -9,6 +9,8 @@
  * @todo Documentation
  */
 class pQueryArray extends pQuery implements pQueryExtension {
+	static $accepts = array('array');
+	
 	/**
 	 * Get the value of an array alement at the given index.
 	 * 

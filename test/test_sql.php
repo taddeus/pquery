@@ -1,8 +1,10 @@
 <?php
 
+__p::load_plugin('sql');
+
 class pQuerySqlTest extends UnitTestCase {
 	function __construct() {
-		$this->UnitTestCase('pQuery MySQL plugin test');
+		parent::__construct('pQuery MySQL plugin');
 	}
 	
 	function test_() {

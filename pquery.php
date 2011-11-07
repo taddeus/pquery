@@ -219,13 +219,16 @@ class pQuery {
 		if( isset($accepts[$type]) ) {
 			$convert_method = $accepts[$type];
 			
-			if( !method_exists($this, $convert_method) )
-				return self::error('Plugin "%s" has no conversion method "%s".', $class_name, $convert_method);
+			if( !method_exists($this, $convert_method) ) {
+				return self::error('Plugin "%s" has no conversion method "%s".',
+					$class_name, $convert_method);
+			}
 			
 			$result = $this->$convert_method($variable);
 			$result === null || $this->variable = $result;
 		} else if( !in_array($type, $accepts) ) {
-			return self::error('Variable type "%s" is not accepted by class "%s".', $type, $class_name);
+			return self::error('Variable type "%s" is not accepted by class "%s".',
+				$type, $class_name);
 		}
 	}
 	

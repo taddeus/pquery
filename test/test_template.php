@@ -1,8 +1,10 @@
 <?php
 
+__p::load_plugin('template');
+
 class pQueryTemplateTest extends UnitTestCase {
 	function __construct() {
-		$this->UnitTestCase('pQuery template plugin test');
+		parent::__construct('pQuery template plugin');
 	}
 	
 	function test_() {
