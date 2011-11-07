@@ -115,7 +115,7 @@ class pQuery {
 	 */
 	static function error($error /* , $arg1, $arg2... */) {
 		$args = func_get_args();
-		$error = nl2br(call_user_func_array('sprintf', $args));
+		$error = call_user_func_array('sprintf', $args);
 		
 		throw new pQueryException($error);
 	}
@@ -251,13 +251,28 @@ class pQuery {
 		if( in_array($name, (array)$class_name::$variable_alias) )
 			$this->variable = $value;
 	}
+	
+	/**
+	 * Handler for pQuery exceptions.
+	 * 
+	 * If the execption is a (@link pQueryException}, exit the script with
+	 * its message. Otherwise, throw the exception further.
+	 * 
+	 * @param Exception $e The exception to handle.
+	 */
+	function exception_handler($e) {
+		if( $e instanceof pQueryException )
+			die(nl2br($e->getMessage()));
+		
+		throw $e;
+	}
 }
 
 /**
  * Exception class for error throwing
  */
 class pQueryException extends Exception {
-
+	
 }
 
 /**
@@ -299,9 +314,14 @@ function _p($variable, $plugin=null) {
 	return new $class_name($variable);
 }
 
-/**
+/*
  * Set an alias for the bas class consistent with plugin aliases.
  */
 class_alias('pQuery', '__p');
+
+/*
+ * Set the exception handler
+ */
+set_exception_handler('__p::exception_handler');
  
 ?>

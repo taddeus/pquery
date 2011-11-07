@@ -28,9 +28,9 @@ while( !$a->is_empty() ) {
 $results = $sql->fetch_all('object');
 $results = _arr($results);
 
-debug($results);
+debug($results);*/
 
-__tpl::set_root('templates', false);
+/*__tpl::set_root('templates', false);
 $tpl = _tpl('test.tpl');
 
 $test1 = $tpl->data->add('test1', array('var' => 'some-variable'));

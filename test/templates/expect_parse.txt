@@ -1,0 +1,39 @@
+lorem
+
+
+block:test1
+	ipsum
+	
+	SOME-VARIABLE
+	{not_a_variable}
+	
+	
+	block:test2
+		dolor
+	end:test2
+	
+	
+	sit
+end:test1
+
+block:test1
+	ipsum
+	
+	SOME-OTHER-VARIABLE
+	{not_a_variable}
+	
+	
+	
+	sit
+end:test1
+
+
+amet
+
+
+block:test3
+	consectetur
+end:test3
+
+
+adipiscing

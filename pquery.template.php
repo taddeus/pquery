@@ -248,8 +248,14 @@ function _tpl($path) {
 	return pQuery::create('tpl', $path);
 }
 
+/*
+ * Add plugin to pQuery
+ */
 __p::extend('pQueryTemplate', 'tpl');
 
+/*
+ * Set initial root to pQuery root folder
+ */
 __tpl::set_root('');
 
 ?>
