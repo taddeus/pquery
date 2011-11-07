@@ -115,13 +115,9 @@ class pQuery {
 	 */
 	static function error($error /* , $arg1, $arg2... */) {
 		$args = func_get_args();
+		$error = nl2br(call_user_func_array('sprintf', $args));
 		
-		if( DEBUG ) {
-			echo nl2br(call_user_func_array('sprintf', $args));
-			//echo debug_backtrace();
-		}
-		
-		pQueryConfig::ERROR_IS_FATAL && exit;
+		throw new pQueryException($error);
 	}
 	
 	/**
@@ -255,6 +251,13 @@ class pQuery {
 		if( in_array($name, (array)$class_name::$variable_alias) )
 			$this->variable = $value;
 	}
+}
+
+/**
+ * Exception class for error throwing
+ */
+class pQueryException extends Exception {
+
 }
 
 /**

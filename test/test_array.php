@@ -39,9 +39,12 @@ class pQueryArrayTest extends UnitTestCase {
 	function test_reverse() {
 		$orginal = range(1, 4);
 		$reverse = range(4, 1, -1);
-		
 		$arr = _arr($orginal);
 		$this->assertEqual($arr->reverse()->variable, $reverse, 'reverse is not really reverse...');
+	}
+	
+	function test_call() {
+		
 	}
 }
 
