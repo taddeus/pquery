@@ -7,7 +7,7 @@
 
 /**
  * @todo Documentation
- * @property $query Alias for {@link pQuery::variable}.
+ * @property $query The query that is being evaluated.
  */
 class pQuerySql extends pQuery implements pQueryExtension {
 	const VARIABLE_PATTERN = '/\[\s*%s\s*\]/';

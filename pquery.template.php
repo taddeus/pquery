@@ -146,6 +146,7 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 	 * @param string $variable The variable to replace.
 	 * @param Block $data The data block to search in for the value.
 	 * @returns string The variable's value if it exists, the original string otherwise.
+	 * @todo Implement translations
 	 */
 	static function parse_variable($variable, $data) {
 		$parts = explode(':', $variable);
@@ -154,7 +155,6 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 		
 		switch( $name ) {
 			case '_':
-				// TODO: translations
 				return '--translation--';
 				break;
 			default:
