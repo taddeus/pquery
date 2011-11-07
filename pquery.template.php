@@ -140,7 +140,7 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 	 * Replace a variable name if it exists within a given data scope.
 	 * 
 	 * Apply any of the following helper functions:
-	 * - Translation: {_:name[:count_var_name]}
+	 * - Translation: <code>{_:name[:count_var_name]}</code>
 	 * - Default: <code>{var_name[:func1:func2:...]}</code>
 	 * 
 	 * @param string $variable The variable to replace.
