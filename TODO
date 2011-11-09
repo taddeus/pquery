@@ -1,0 +1,3 @@
+- Extend array plugin with stack/collection functions.
+- Add unit tests for base and SQL plugin.
+- Create plugin for URL rewriting.
