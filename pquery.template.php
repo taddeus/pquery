@@ -12,6 +12,8 @@ __p::load_util('block');
  * @property string $content The template's content.
  */
 class pQueryTemplate extends pQuery implements pQueryExtension {
+	const DEFAULT_EXTENSION = 'tpl';
+	
 	static $accepts = array('string' => 'open_template_file');
 	
 	/**
@@ -57,9 +59,13 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 	 */
 	function open_template_file() {
 		$found = false;
+		$filename = $this->variable;
+		
+		// Add default extension
+		strpos($filename, '.') || $filename .= '.'.self::DEFAULT_EXTENSION;
 		
 		foreach( self::$include_path as $root ) {
-			$path = $root.$this->variable;
+			$path = $root.$filename;
 			
 			if( is_file($path) ) {
 				$this->path = $path;
@@ -69,7 +75,7 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 		}
 		
 		self::error("Could not find template file \"%s\", looked in folders:\n%s",
-			$this->variable, implode("\n", self::$include_path));
+			$filename, implode("\n", self::$include_path));
 	}
 	
 	/**
@@ -228,7 +234,7 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 	 * @param bool $relative Indicates whether the path is relative to the document root.
 	 */
 	static function add_root($path, $relative=true) {
-		$relative && $path = PQUERY_ROOT.$path;
+		$relative && $path = SITE_ROOT.$path;
 		preg_match('%/$%', $path) || $path .= '/';
 		
 		if( !is_dir($path) )
