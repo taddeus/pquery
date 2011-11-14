@@ -84,7 +84,7 @@ class pQueryCache extends pQuery implements pQueryExtension {
 	 * 
 	 */
 	function concatenate() {
-		$this->content = implode("\n", array_map('file_get_contents', $this->files));
+		$this->content = trim(implode("\n", array_map('file_get_contents', $this->files)));
 		
 		return $this;
 	}
@@ -107,21 +107,14 @@ class pQueryCache extends pQuery implements pQueryExtension {
 		method_exists($this, 'set_headers') && $this->set_headers();
 		
 		if( $admin_updated = $this->admin_updated() || !isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ) {
-			//echo 'admin updated';
 			$this->save();
-		} elseif( !isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ) {
-			//echo 'hard refresh';
-			//$this->concatenate();
 		} elseif( isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ) {
 			$if_modified_since = strtotime(preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']));
 			
 			if( $if_modified_since >= $last_modified ) {
-				//echo 'not modified';
 				// Not modified
 				header((php_sapi_name() == 'CGI' ? 'Status:' : 'HTTP/1.0').' 304 Not Modified');
 				exit;
-			} else {
-				//echo 'modified';
 			}
 		}
 		
