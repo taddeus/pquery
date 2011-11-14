@@ -104,7 +104,7 @@ class CssNode {
 								if( self::$config['compress_colors'] && strpos($part, 'color') !== false )
 									$value = self::compress_color($value);
 								
-								$replacement .= (empty($m[1]) ? ' ' : $m[1]).$value;
+								$replacement .= (!strlen($m[1]) ? ' ' : $m[1]).$value;
 							}
 						} elseif( isset($values[$part]) ) {
 							$value = $values[$part];
@@ -147,20 +147,26 @@ class CssNode {
 	}
 	
 	function compress($value, $rule) {
+		// Compress colors
 		if( self::$config['compress_colors'] && preg_match('/color$/', $rule) )
 			$value = self::compress_color($value);
 		
-		// Replace any redundant margins and paddings
+		// Compress measurements
 		if( self::$config['compress_measurements']
-				&& ($rule == 'margin' || $rule == 'padding')
-				&& preg_match('/^(\w+) (\w+) (\w+)(?: (\w+))?$/', $value, $m) ) {
-			$value = $m[1].' '.$m[2];
-			$left_needed = isset($m[4]) && $m[4] != $m[2];
-			$bottom_needed = $left_needed || $m[3] != $m[1];
-			
-			if( $bottom_needed ) {
-				$value .= ' '.$m[3];
-				$left_needed && $value .= ' '.$m[4];
+				&& ($rule == 'margin' || $rule == 'padding') ) {
+			if( preg_match('/^0\w+$/', $value, $m) ) {
+				// Replace zero with unit by just zero
+				$value = 0;
+			} elseif( preg_match('/^(\w+) (\w+) (\w+)(?: (\w+))?$/', $value, $m) ) {
+				// Replace redundant margins and paddings
+				$value = $m[1].' '.$m[2];
+				$left_needed = isset($m[4]) && $m[4] != $m[2];
+				$bottom_needed = $left_needed || $m[3] != $m[1];
+				
+				if( $bottom_needed ) {
+					$value .= ' '.$m[3];
+					$left_needed && $value .= ' '.$m[4];
+				}
 			}
 		}
 		
@@ -171,7 +177,7 @@ class CssNode {
 		foreach( preg_split('/\s*;\s*/', trim($rules)) as $rule ) {
 			$split = preg_split('/\s*:\s*/', $rule, 2);
 			
-			if( count($split) == 2 && !empty($split[0]) && !empty($split[1]) )
+			if( count($split) == 2 && strlen($split[0]) && strlen($split[1]) )
 				$this->rules[$split[0]] = $split[1];
 		}
 	}
@@ -204,12 +210,12 @@ class CssNode {
 				$line = $m[2];
 			}
 			
-			if( empty($line) ) {
-				// End tag
-				$current_node = $current_node->parent_node;
-			} else {
+			if( strlen($line) ) {
 				// Normal rule
 				$current_node->parse_rules($line);
+			} else {
+				// End tag
+				$current_node = $current_node->parent_node;
 			}
 		}
 		
