@@ -40,7 +40,7 @@ class pQueryJs extends pQueryCache implements pQueryExtension {
 	 * 
 	 */
 	function minify() {
-		$this->content = JShrink::minify($this->content, array('flaggedComments' => false));
+		$this->content = trim(JShrink::minify($this->content, array('flaggedComments' => false)));
 		
 		return $this;
 	}

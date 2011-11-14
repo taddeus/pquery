@@ -84,7 +84,7 @@ class pQueryCache extends pQuery implements pQueryExtension {
 	 * 
 	 */
 	function concatenate() {
-		$this->content = trim(implode("\n", array_map('file_get_contents', $this->files)));
+		$this->content = implode("\n", array_map('file_get_contents', $this->files));
 		
 		return $this;
 	}
