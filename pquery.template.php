@@ -5,7 +5,7 @@
  * @package pQuery
  */
 
-__p::load_util('block');
+__p::load_utils('block');
 
 /**
  * @todo Documentation

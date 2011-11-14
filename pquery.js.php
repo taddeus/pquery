@@ -6,7 +6,7 @@
  */
 
 __p::require_plugins('cache');
-__p::load_util('jshrink');
+__p::load_utils('jshrink');
 
 /**
  * @todo Documentation

@@ -6,7 +6,7 @@
  */
 
 __p::require_plugins('cache');
-__p::load_util('CssParser');
+__p::load_utils('CssParser');
 
 /**
  * @todo Documentation

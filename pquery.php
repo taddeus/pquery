@@ -147,19 +147,21 @@ class pQuery {
 	}
 	
 	/**
-	 * Try to load an utility file.
-	 * 
-	 * @param string $basename 
+	 * Try to load one or more utility files.
 	 */
-	static function load_util($basename) {
-		$path = PQUERY_ROOT.pQueryConfig::UTILS_FOLDER.$basename.'.php';
+	static function load_utils(/* $basename1 $basename2, ... */) {
+		$files = func_get_args();
 		
-		if( !file_exists($path) ) {
-			return self::error('Utility "%s" could not be loaded (looked in "%s").',
-				$basename, $path);
+		foreach( $files as $basename ) {
+			$path = PQUERY_ROOT.pQueryConfig::UTILS_FOLDER.$basename.'.php';
+			
+			if( !file_exists($path) ) {
+				return self::error('Utility "%s" could not be loaded (looked in "%s").',
+					$basename, $path);
+			}
+			
+			include_once $path;
 		}
-		
-		include_once $path;
 	}
 	
 	/**
