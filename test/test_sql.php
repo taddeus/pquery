@@ -53,8 +53,14 @@ class pQuerySqlTest extends UnitTestCase {
 	
 	function test_select_simple() {
 		$sql = _sql("select bar from foo where id = 1");
-		$results = $sql->fetch_all('object');
-		$this->assertEqual($results[0]->bar, 'test1');
+		$result = $sql->fetch('object');
+		$this->assertEqual($result->bar, 'test1');
+		$this->assertIdentical($sql->fetch(), false);
+	}
+	
+	function test_result_count() {
+		$sql = _sql("select bar from foo where id in (1, 2)");
+		$this->assertEqual($sql->result_count(), 2);
 	}
 }
 

@@ -141,6 +141,20 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	}
 	
 	/**
+	 * Find the number of resulting rows of the current query.
+	 * 
+	 * @returns int The number of rows.
+	 */
+	function result_count() {
+		$this->assert_execution();
+		
+		if( !$this->result )
+			return 0;
+		
+		return mysql_num_rows($this->result);
+	}
+	
+	/**
 	 * Fetch a row from the current result.
 	 * 
 	 * @param string $type The format of the result row.
