@@ -216,8 +216,8 @@ class pQuery {
 			return self::error('Plugin "%s" does not exist.', $plugin);
 		
 		$obj = new $class_name();
-		$obj->arguments = $args;
 		$obj->set_variable(array_shift($args));
+		$obj->arguments = $args;
 		
 		return $obj;
 	}
@@ -306,11 +306,9 @@ class pQueryException extends Exception {
  */
 interface pQueryExtension {
 	/**
-	 * Constructor.
 	 * 
-	 * @param mixed $variable The variable to use an utility on.
 	 */
-	//function __construct();
+	
 }
 
 /**
