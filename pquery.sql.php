@@ -15,6 +15,13 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	static $accepts = array('string' => 'parse_query', 'resource');
 	
 	/**
+	 * The default row fetching type, one of 'assoc', 'object' or 'array'.
+	 * 
+	 * @var resource
+	 */
+	const DEFAULT_FETCH_TYPE = 'assoc';
+	
+	/**
 	 * The MySQL link identifier.
 	 * 
 	 * @var resource
@@ -26,6 +33,14 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * @var string|array
 	 */
 	static $variable_alias = 'query';
+	
+	/**
+	 * Database login data, should be an associative array containing
+	 * values for 'host', 'username', 'password' and 'dbname'
+	 * 
+	 * @var array
+	 */
+	static $login_data = array();
 	
 	/**
 	 * The result of the current query.
@@ -91,7 +106,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * @param array $variables The variables to replace.
 	 * @returns pQuerySql The current query object.
 	 */
-	function set_plain($variables) {
+	function set_unescaped($variables) {
 		return $this->replace_variables($variables, false);
 	}
 	
@@ -114,7 +129,6 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	function execute() {
 		self::assert_connection();
 		
-		//debug('query:', $this->query);
 		$result = mysql_query($this->query, self::$link);
 		
 		if( !$result )
@@ -132,7 +146,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * @param string $type The format of the result row.
 	 * @returns mixed The fetched row in the requested format.
 	 */
-	function fetch($type) {
+	function fetch($type=self::DEFAULT_FETCH_TYPE) {
 		$this->assert_execution();
 		
 		if( !$this->result )
@@ -152,7 +166,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * @param string $type The format of the result rows.
 	 * @returns array The result set.
 	 */
-	function fetch_all($type) {
+	function fetch_all($type=self::DEFAULT_FETCH_TYPE) {
 		$results = array();
 		
 		while( ($row = $this->fetch($type)) !== false ) {
@@ -172,6 +186,42 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	}
 	
 	/**
+	 * Set database server login data.
+	 * 
+	 * @param string $host The database server to connect with.
+	 * @param string $username The username to login with on the database server.
+	 * @param string $password The password to login with on the database server.
+	 * @param string $dbname The name of the database to select after connecting to the server.
+	 */
+	static function set_login_data($host, $username, $password, $dbname) {
+		// Close any existing connection
+		if( self::$link ) {
+			mysql_close(self::$link);
+			self::$link = null;
+		}
+		
+		self::$login_data = array_merge(self::$login_data,
+			compact('host', 'username', 'password', 'dbname'));
+	}
+	
+	/**
+	 * Assert that the database server config has been set.
+	 */
+	static function assert_login_data_exist() {
+		if( !isset(self::$login_data['host']) )
+			return self::error('No SQL host specified.');
+		
+		if( !isset(self::$login_data['username']) )
+			return self::error('No SQL username specified.');
+		
+		if( !isset(self::$login_data['password']) )
+			return self::error('No SQL password specified.');
+		
+		if( !isset(self::$login_data['host']) )
+			return self::error('No SQL host specified.');
+	}
+	
+	/**
 	 * Assert that the MySQL connection is opened.
 	 * 
 	 * @uses mysql_connect,mysql_select_db
@@ -181,11 +231,10 @@ class pQuerySql extends pQuery implements pQueryExtension {
 		if( self::$link )
 			return;
 		
-		if( !isset(pQueryConfig::$sql) )
-			return self::error('Could not connect to database: no MySQL config found.');
+		self::assert_login_data_exist();
 		
 		// Connect to the database
-		$c = pQueryConfig::$sql;
+		$c = self::$login_data;
 		$link = @mysql_connect($c['host'], $c['username'], $c['password']);
 		
 		if( $link === false )

@@ -5,12 +5,17 @@
  * @package pQuery
  */
 
-include_once 'pquery.config.php';
-
 /**
  * Common utility class.
  */
 class pQuery {
+	/**
+	 * Name of the utilities folder
+	 * 
+	 * @var string
+	 */
+	const UTILS_FOLDER = 'utils/';
+	
 	/**
 	 * Pattern of the alias created for an extending plugin that has defined an alias.
 	 * 
@@ -153,7 +158,7 @@ class pQuery {
 		$files = func_get_args();
 		
 		foreach( $files as $basename ) {
-			$path = PQUERY_ROOT.pQueryConfig::UTILS_FOLDER.$basename.'.php';
+			$path = PQUERY_ROOT.self::UTILS_FOLDER.$basename.'.php';
 			
 			if( !file_exists($path) ) {
 				return self::error('Utility "%s" could not be loaded (looked in "%s").',
