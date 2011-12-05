@@ -61,8 +61,8 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 		$found = false;
 		$filename = $this->variable;
 		
-		// Add default extension
-		strpos($filename, '.') || $filename .= '.'.self::DEFAULT_EXTENSION;
+		// Add default extension if none is found
+		strpos($filename, '.') === false && $filename .= '.'.self::DEFAULT_EXTENSION;
 		
 		foreach( self::$include_path as $root ) {
 			$path = $root.$filename;

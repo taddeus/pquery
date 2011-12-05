@@ -275,7 +275,8 @@ class pQuery {
 	}
 	
 	/**
-	 * Assert that the given constants have been defined. Add the prefix 'PQUERY_' to each constant name.
+	 * Assert that the given constants have been defined.
+	 * Add the prefix 'PQUERY_' to each constant name.
 	 */
 	static function assert_defined(/* $constant1 [ , $constant2, ... ] */) {
 		$constants = func_get_args();
