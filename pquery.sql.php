@@ -349,7 +349,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	}
 	
 	/**
-	 * Delete all record from the given table that match the constraints.
+	 * Delete all records from the given table that match the constraints.
 	 * 
 	 * @param string $table The table to insert into.
 	 * @param array $constraints Column names pointing to their values
@@ -370,7 +370,8 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * @param mixed $constraints One of:
 	 *     - A variable that evaluates as "empty", which will yield the string '1'.
 	 *     - A string, which will be returned unchanged.
-	 *     - A list of column names pointing to their values.
+	 *     - A list of column names pointing to their values. A value may be
+	 *       a list, wich will yield a query with the MySQL 'IN' selector.
 	 * @param bool $escape Whether to escape the values.
 	 * @returns string The parsed constraints.
 	 */
