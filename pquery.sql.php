@@ -329,6 +329,23 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	}
 	
 	/**
+	 * Select all records from the given table that match the constraints.
+	 * 
+	 * @param string $table The table to select from.
+	 * @param array $constraints Column names pointing to their values.
+	 * @param bool $escape Whether to escape the constraint values. Defaults to TRUE.
+	 * @returns pQuerySql The created query instance.
+	 */
+	static function select($table, $columns, $constraints=array(), $escape=true) {
+		return _sql('SELECT [columns] FROM `[table]` WHERE [constraints];')
+			->set_unescaped(array(
+				'columns' => self::parse_columns($columns),
+				'table' => $table,
+				'constraints' => self::parse_constraints($constraints, $escape)
+			));
+	}
+	
+	/**
 	 * Insert a record in the given table.
 	 * 
 	 * @param string $table The table to insert into.
@@ -351,8 +368,8 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	/**
 	 * Delete all records from the given table that match the constraints.
 	 * 
-	 * @param string $table The table to insert into.
-	 * @param array $constraints Column names pointing to their values
+	 * @param string $table The table to delete from.
+	 * @param array $constraints Column names pointing to their values.
 	 * @param bool $escape Whether to escape the constraint values. Defaults to TRUE.
 	 * @returns pQuerySql The created query instance.
 	 */
@@ -362,6 +379,66 @@ class pQuerySql extends pQuery implements pQueryExtension {
 				'table' => $table,
 				'constraints' => self::parse_constraints($constraints, $escape)
 			));
+	}
+	
+	/**
+	 * Parse a list of column names.
+	 * 
+	 * @param string|array $columns One of:
+	 *     - '*': Returns itself.
+	 *     - string: Treated as a column name or aggregate function, and
+	 *               escaped as such with backticks.
+	 *     - array: 
+	 * @returns string The parsed columns.
+	 */
+	static function parse_columns($columns) {
+		if( $columns == '*' )
+			return '*';
+		
+		if( is_string($columns) )
+			return self::escape_column($columns);
+		
+		if( !is_array($columns) )
+			return self::error('Unknown columns type.');
+		
+		$escaped_columns = array();
+		
+		foreach( $columns as $key => $value ) {
+			if( is_numeric($key) ) {
+				// Simple column name
+				$escaped_columns[] = self::escape_column($value);
+			} else {
+				// MySQL 'AS' construction
+				$escaped_columns[] = self::escape_column($key)." AS `".$value."`";
+			}
+		}
+		
+		return implode(", ", $escaped_columns);
+	}
+	
+	/**
+	 * Escape a column name to be safely used (and in a tidy manner) in a column list.
+	 * 
+	 * @param string $column The column name to escape.
+	 * @returns string The escaped column.
+	 */
+	static function escape_column($column) {
+		if( preg_match('/^`.*?`$/', $column) ) {
+			// `column` -> `column`
+			return $column;
+		} elseif( preg_match('/^(\w+)\.(\w+)$/', $column, $m) ) {
+			// table.column -> `table`.`column`
+			list($table, $column) = array_slice($m, 1);
+			return "`$table`.`$column`";
+		} elseif( preg_match('/^(\w+)\(([^)]+)\)$/', $column, $m) ) {
+			// function(name) -> FUNCTION(`name`)
+			// function(`name`) -> FUNCTION(`name`)
+			list($aggregate_function, $column) = array_slice($m, 1);
+			return strtoupper($aggregate_function)."(".self::escape_column($column).")";
+		}
+		
+		// column -> `column`
+		return "`$column`";
 	}
 	
 	/**

@@ -83,6 +83,41 @@ class pQuerySqlTest extends UnitTestCase {
 		$this->assertEqual($sql->num_rows(), 2);
 	}
 	
+	function test_escape_column_simple() {
+		$this->assertEqual(__sql::escape_column('foo'), '`foo`');
+	}
+	
+	function test_escape_column_escaped() {
+		$this->assertEqual(__sql::escape_column('`foo`'), '`foo`');
+	}
+	
+	function test_escape_column_table() {
+		$this->assertEqual(__sql::escape_column('foo.bar'), '`foo`.`bar`');
+	}
+	
+	function test_escape_column_aggregate() {
+		$this->assertEqual(__sql::escape_column('count(foo)'), 'COUNT(`foo`)');
+	}
+	
+	function test_escape_column_aggregate_escaped() {
+		$this->assertEqual(__sql::escape_column('count(`foo`)'), 'COUNT(`foo`)');
+	}
+	
+	function test_parse_columns_star() {
+		$sql = __sql::select('foo', '*', '', false);
+		$this->assertEqual($sql->query, "SELECT * FROM `foo` WHERE 1;");
+	}
+	
+	function test_parse_columns_simple() {
+		$sql = __sql::select('foo', array('id', 'bar'), '', false);
+		$this->assertEqual($sql->query, "SELECT `id`, `bar` FROM `foo` WHERE 1;");
+	}
+	
+	function test_parse_columns_as() {
+		$sql = __sql::select('foo', array('id' => 'foo_id'), '', false);
+		$this->assertEqual($sql->query, "SELECT `id` AS `foo_id` FROM `foo` WHERE 1;");
+	}
+	
 	function test_parse_constraints_empty() {
 		$this->assertIdentical(__sql::parse_constraints(null, false), "1");
 	}
@@ -102,6 +137,11 @@ class pQuerySqlTest extends UnitTestCase {
 		$this->assertEqual(__sql::parse_constraints(
 			array('id' => range(1, 3)), false),
 			"`id` IN ('1', '2', '3')");
+	}
+	
+	function test_select_query() {
+		$sql = __sql::select('foo', '*', array('bar' => 'test1'), false);
+		$this->assertEqual($sql->query, "SELECT * FROM `foo` WHERE `bar` = 'test1';");
 	}
 	
 	function test_insert_query() {
