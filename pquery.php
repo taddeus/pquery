@@ -81,6 +81,77 @@ class pQuery {
 	var $arguments = array();
 	
 	/**
+	 * Parse the type of the given variable, and convert it if needed.
+	 * 
+	 * @param mixed $variable The variable to parse.
+	 * @param bool $force Whether not to check the variables type against the accepted types.
+	 */
+	function set_variable($variable, $force=false) {
+		$this->variable = $variable;
+		
+		if( $force )
+			return;
+		
+		$type = gettype($variable);
+		$class_name = get_class($this);
+		$accepts = $class_name::$accepts;
+		
+		if( isset($accepts[$type]) ) {
+			$convert_method = $accepts[$type];
+			
+			if( !method_exists($this, $convert_method) ) {
+				return self::error('Plugin "%s" has no conversion method "%s".',
+					$class_name, $convert_method);
+			}
+			
+			$result = $this->$convert_method($variable);
+			$result === null || $this->variable = $result;
+		} else if( !in_array($type, $accepts) ) {
+			return self::error('Variable type "%s" is not accepted by class "%s".',
+				$type, $class_name);
+		}
+	}
+	
+	/**
+	 * Getter for {@link variable}.
+	 * 
+	 * @see variable_alias
+	 */
+	function __get($name) {
+		$class_name = get_class($this);
+		
+		if( in_array($name, (array)$class_name::$variable_alias) )
+			return $this->variable;
+	}
+	
+	/**
+	 * Setter for {@link variable}.
+	 * 
+	 * @see variable_alias
+	 */
+	function __set($name, $value) {
+		$class_name = get_class($this);
+		
+		if( in_array($name, (array)$class_name::$variable_alias) )
+			$this->variable = $value;
+	}
+	
+	/**
+	 * Handler for pQuery exceptions.
+	 * 
+	 * If the execption is a (@link pQueryException}, exit the script with
+	 * its message. Otherwise, throw the exception further.
+	 * 
+	 * @param Exception $e The exception to handle.
+	 */
+	function exception_handler($e) {
+		if( $e instanceof pQueryException )
+			die(nl2br($e->getMessage()));
+		
+		throw $e;
+	}
+	
+	/**
 	 * Extend pQuery with a plugin.
 	 * 
 	 * @param string $class_name The name of the plugin's base class.
@@ -201,77 +272,6 @@ class pQuery {
 			
 			include_once $path;
 		}
-	}
-	
-	/**
-	 * Parse the type of the given variable, and convert it if needed.
-	 * 
-	 * @param mixed $variable The variable to parse.
-	 * @param bool $force Whether not to check the variables type against the accepted types.
-	 */
-	function set_variable($variable, $force=false) {
-		$this->variable = $variable;
-		
-		if( $force )
-			return;
-		
-		$type = gettype($variable);
-		$class_name = get_class($this);
-		$accepts = $class_name::$accepts;
-		
-		if( isset($accepts[$type]) ) {
-			$convert_method = $accepts[$type];
-			
-			if( !method_exists($this, $convert_method) ) {
-				return self::error('Plugin "%s" has no conversion method "%s".',
-					$class_name, $convert_method);
-			}
-			
-			$result = $this->$convert_method($variable);
-			$result === null || $this->variable = $result;
-		} else if( !in_array($type, $accepts) ) {
-			return self::error('Variable type "%s" is not accepted by class "%s".',
-				$type, $class_name);
-		}
-	}
-	
-	/**
-	 * Getter for {@link variable}.
-	 * 
-	 * @see variable_alias
-	 */
-	function __get($name) {
-		$class_name = get_class($this);
-		
-		if( in_array($name, (array)$class_name::$variable_alias) )
-			return $this->variable;
-	}
-	
-	/**
-	 * Setter for {@link variable}.
-	 * 
-	 * @see variable_alias
-	 */
-	function __set($name, $value) {
-		$class_name = get_class($this);
-		
-		if( in_array($name, (array)$class_name::$variable_alias) )
-			$this->variable = $value;
-	}
-	
-	/**
-	 * Handler for pQuery exceptions.
-	 * 
-	 * If the execption is a (@link pQueryException}, exit the script with
-	 * its message. Otherwise, throw the exception further.
-	 * 
-	 * @param Exception $e The exception to handle.
-	 */
-	function exception_handler($e) {
-		if( $e instanceof pQueryException )
-			die(nl2br($e->getMessage()));
-		
-		throw $e;
 	}
 }
 
