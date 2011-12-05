@@ -1,6 +1,7 @@
 <?php
 
 __p::load_plugin('sql');
+include '../../debug.php';
 
 class pQuerySqlTest extends UnitTestCase {
 	function __construct() {
@@ -8,7 +9,12 @@ class pQuerySqlTest extends UnitTestCase {
 	}
 	
 	function setUp() {
-		__sql::set_login_data('localhost', 'root', '', 'pquery_test');
+		
+	}
+	
+	function tearDown() {
+		__sql::disconnect();
+		__sql::$login_data = array();
 	}
 	
 	function test_set_login_data() {
@@ -22,7 +28,6 @@ class pQuerySqlTest extends UnitTestCase {
 	
 	function test_no_login_data() {
 		$this->expectException('pQueryException');
-		__sql::$login_data = array();
 		__sql::assert_login_data_exist();
 	}
 	
@@ -33,6 +38,7 @@ class pQuerySqlTest extends UnitTestCase {
 	}
 	
 	function test_variable_query() {
+		self::set_login_data();
 		$sql = _sql("select id from foo where bar = '[bar]'")
 					->set(array('bar' => 'test1'));
 		$this->assertEqual($sql->query, "select id from foo where bar = 'test1'");
@@ -45,12 +51,26 @@ class pQuerySqlTest extends UnitTestCase {
 	}
 	
 	function test_escaped_query() {
+		self::set_login_data();
 		$sql = _sql("select id from foo where bar = '[bar]'")
 					->set(array('bar' => "select id from foo where bar = 'test1'"));
 		$this->assertNotEqual($sql->query, "select id from foo where bar = 'select id from foo where bar = 'test1''");
 	}
 	
+	function test_constructor_simple() {
+		self::set_login_data();
+		$sql = _sql("select id from foo where bar = '[0]'", 'test1');
+		$this->assertEqual($sql->query, "select id from foo where bar = 'test1'");
+	}
+	
+	function test_constructor_advanced() {
+		self::set_login_data();
+		$sql = _sql("[0] [bar] [foo] [2]", '1', array('bar' => '2', 'foo' => '3'), '4');
+		$this->assertEqual($sql->query, "1 2 3 4");
+	}
+	
 	function test_select_simple() {
+		self::set_login_data();
 		$sql = _sql("select bar from foo where id = 1");
 		$result = $sql->fetch('object');
 		$this->assertEqual($result->bar, 'test1');
@@ -58,8 +78,13 @@ class pQuerySqlTest extends UnitTestCase {
 	}
 	
 	function test_result_count() {
+		__sql::set_login_data('localhost', 'root', '', 'pquery_test');
 		$sql = _sql("select bar from foo where id in (1, 2)");
 		$this->assertEqual($sql->result_count(), 2);
+	}
+	
+	static function set_login_data() {
+		__sql::set_login_data('localhost', 'root', '', 'pquery_test');
 	}
 }
 

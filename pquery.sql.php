@@ -66,12 +66,19 @@ class pQuerySql extends pQuery implements pQueryExtension {
 		if( !count($args) )
 			return;
 		
+		// Parse arguments as variables. Arrays and 
 		// Replace variable indices by names equal to their indices
-		if( !is_array($args[0]) )
-			array_unshift($args, null);
+		$variables = array();
+		
+		foreach( $args as $i => $argument ) {
+			if( is_array($argument) )
+				$variables = array_merge($variables, $argument);
+			else
+				$variables[$i] = $argument;
+		}
 		
 		// Replace variables by their escaped values
-		$this->set($args);
+		$this->set($variables);
 	}
 	
 	/**
@@ -133,7 +140,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 		$result = mysql_query($this->query, self::$link);
 		
 		if( !$result )
-			return self::mysql_error();
+			return self::mysql_error($this->query);
 		
 		$this->result = $result;
 		$this->executed = true;
@@ -210,10 +217,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 */
 	static function set_login_data($host, $username, $password, $dbname) {
 		// Close any existing connection
-		if( self::$link ) {
-			mysql_close(self::$link);
-			self::$link = null;
-		}
+		self::disconnect();
 		
 		self::$login_data = array_merge(self::$login_data,
 			compact('host', 'username', 'password', 'dbname'));
@@ -224,16 +228,16 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 */
 	static function assert_login_data_exist() {
 		if( !isset(self::$login_data['host']) )
-			return self::error('No SQL host specified.');
+			return self::error('No MySQL database server host is specified.');
 		
 		if( !isset(self::$login_data['username']) )
-			return self::error('No SQL username specified.');
+			return self::error('No username is specified for the MySQL server.');
 		
 		if( !isset(self::$login_data['password']) )
-			return self::error('No SQL password specified.');
+			return self::error('No password is specified for the MySQL server.');
 		
 		if( !isset(self::$login_data['host']) )
-			return self::error('No SQL host specified.');
+			return self::error('No MySQL database name is specified.');
 	}
 	
 	/**
@@ -263,23 +267,43 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	}
 	
 	/**
-	 * Echo the latest MySQL error.
+	 * Close the current connection, if any.
+	 * 
+	 * @uses mysql_close
 	 */
-	static function mysql_error() {
-		self::error('MySQL error %d: %s.', mysql_errno(), mysql_error());
+	static function disconnect() {
+		// Return if the connection has already been closed
+		if( !self::$link )
+			return;
+		
+		mysql_close(self::$link);
+		self::$link = null;
+	}
+	
+	/**
+	 * Echo the latest MySQL error.
+	 * If a query is specified and debug mode is on, add the query to the error message.
+	 * 
+	 * @param string $query The query that was executed, if any.
+	 */
+	static function mysql_error($query='') {
+		$error = sprintf('MySQL error %d: %s.', mysql_errno(), mysql_error());
+		PQUERY_DEBUG && $error .= "\nQuery: ".$this->query;
+		
+		self::error($error);
 	}
 	
 	/**
 	 * Extention of {@link pQuery::error}, returning FALSE (useful in result loops).
 	 * Also, the current query is printed in debug mode.
 	 * 
+	 * @param string $error The error message
 	 * @returns bool FALSE
 	 */
-	static function error() {
-		parent::error('MySQL error %d: %s.', mysql_errno(), mysql_error());
-		
-		if( PQUERY_DEBUG )
-			echo $this->query;
+	static function error($error /* [ , $arg1 [ , ... ] ] */) {
+		$args = func_get_args();
+		call_user_func_array('pQuery::error', $args);
+		//parent::error('SQL error %d: %s.', mysql_errno(), mysql_error());
 		
 		return false;
 	}
