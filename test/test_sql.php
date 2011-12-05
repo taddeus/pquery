@@ -1,7 +1,6 @@
 <?php
 
 __p::load_plugin('sql');
-include '../../debug.php';
 
 class pQuerySqlTest extends UnitTestCase {
 	function __construct() {

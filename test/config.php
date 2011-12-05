@@ -11,7 +11,7 @@
  * 
  * @var bool
  */
-define('DEBUG', true);
+define('PQUERY_DEBUG', true);
 
 /**
  * The root location of the pQuery framework folder, used for file
@@ -20,18 +20,5 @@ define('DEBUG', true);
  * @var string
  */
 define('PQUERY_ROOT', 'D:/xampp/htdocs/pquery/');
-
-/**
- * Abstract class containing plugin configs.
- */
-abstract class pQueryConfig {
-	/**
-	 * Indicates whether errors occuring in the framework will
-	 * terminate the script.
-	 * 
-	 * @var bool
-	 */
-	const ERROR_IS_FATAL = true;
-}
 
 ?>

@@ -112,7 +112,7 @@ class pQuery {
 	}
 	
 	/**
-	 * Display an error message if in {@link DEBUG} mode.
+	 * Display an error message if in debug mode.
 	 * 
 	 * The optional arguments are passed to {@link printf}, along with $error.
 	 * 
@@ -314,7 +314,7 @@ function _p($variable, $plugin=null) {
 		// Use custom plugin class
 		if( isset(pQuery::$plugins[$plugin]) )
 			$class_name = pQuery::$plugins[$plugin];
-		else if( DEBUG )
+		else if( PQUERY_DEBUG )
 			pQuery::error('Plugin "%s" does not exist.', $plugin);
 	}
 	

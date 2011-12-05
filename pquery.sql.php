@@ -271,14 +271,14 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	
 	/**
 	 * Extention of {@link pQuery::error}, returning FALSE (useful in result loops).
-	 * Also, the current query is printed in DEBUG mode.
+	 * Also, the current query is printed in debug mode.
 	 * 
 	 * @returns bool FALSE
 	 */
 	static function error() {
 		parent::error('MySQL error %d: %s.', mysql_errno(), mysql_error());
 		
-		if( DEBUG )
+		if( PQUERY_DEBUG )
 			echo $this->query;
 		
 		return false;
