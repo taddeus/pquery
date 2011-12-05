@@ -10,14 +10,15 @@
  * @property $query The query that is being evaluated.
  */
 class pQuerySql extends pQuery implements pQueryExtension {
-	const VARIABLE_PATTERN = '/\[\s*%s\s*\]/';
-	
 	static $accepts = array('string' => 'parse_query', 'resource');
 	
 	/**
+	 * The pattern to use for specifying variables in a query.
+	 */
+	const VARIABLE_PATTERN = '/\[\s*%s\s*\]/';
+	
+	/**
 	 * The default row fetching type, one of 'assoc', 'object' or 'array'.
-	 * 
-	 * @var resource
 	 */
 	const DEFAULT_FETCH_TYPE = 'assoc';
 	
@@ -143,7 +144,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	/**
 	 * Find the number of resulting rows of the current query.
 	 * 
-	 * @returns int The number of rows.
+	 * @returns int The number of result rows.
 	 */
 	function result_count() {
 		$this->assert_execution();
