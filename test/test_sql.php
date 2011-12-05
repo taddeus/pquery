@@ -77,10 +77,54 @@ class pQuerySqlTest extends UnitTestCase {
 		$this->assertIdentical($sql->fetch(), false);
 	}
 	
-	function test_result_count() {
-		__sql::set_login_data('localhost', 'root', '', 'pquery_test');
+	function test_num_rows() {
+		self::set_login_data();
 		$sql = _sql("select bar from foo where id in (1, 2)");
-		$this->assertEqual($sql->result_count(), 2);
+		$this->assertEqual($sql->num_rows(), 2);
+	}
+	
+	function test_parse_constraints_empty() {
+		$this->assertIdentical(__sql::parse_constraints(null, false), "1");
+	}
+	
+	function test_parse_constraints_string() {
+		$constraints = "foo LIKE '%bar%'";
+		$this->assertEqual(__sql::parse_constraints($constraints, false), $constraints);
+	}
+	
+	function test_parse_constraints_simple() {
+		$this->assertEqual(__sql::parse_constraints(
+			array('id' => 1, 'bar' => 'test1'), false),
+			"`id` = '1' AND `bar` = 'test1'");
+	}
+	
+	function test_parse_constraints_value_list() {
+		$this->assertEqual(__sql::parse_constraints(
+			array('id' => range(1, 3)), false),
+			"`id` IN ('1', '2', '3')");
+	}
+	
+	function test_insert_query() {
+		$sql = __sql::insert_row('foo', array('bar' => 'test3'), false);
+		$this->assertEqual($sql->query, "INSERT INTO `foo`(`bar`) VALUES('test3');");
+	}
+	
+	function test_delete_query() {
+		$sql = __sql::delete('foo', array('bar' => 'test3'), false);
+		$this->assertEqual($sql->query, "DELETE FROM `foo` WHERE `bar` = 'test3';");
+	}
+	
+	function test_insert_delete() {
+		self::set_login_data();
+		$insert = __sql::insert_row('foo', array('bar' => 'test3'))->execute();
+		
+		// Do not continue unless the value has been inserted
+		if( !$this->assertIdentical($insert->result, true) )
+			return false;
+		
+		// Delete the record that was just inserted
+		$delete = __sql::delete('foo', array('bar' => 'test3'))->execute();
+		$this->assertIdentical($delete->result, true);
 	}
 	
 	static function set_login_data() {

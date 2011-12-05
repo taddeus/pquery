@@ -152,14 +152,24 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * Find the number of resulting rows of the current query.
 	 * 
 	 * @returns int The number of result rows.
+	 * @uses mysql_num_rows
 	 */
-	function result_count() {
+	function num_rows() {
 		$this->assert_execution();
 		
-		if( !$this->result )
-			return 0;
+		return is_resource($this->result) ? mysql_num_rows($this->result) : 0;
+	}
+	
+	/**
+	 * Find the number of rows affected by the current query.
+	 * 
+	 * @returns int The number of affected rows.
+	 * @uses mysql_affected_rows
+	 */
+	function affected_rows() {
+		$this->assert_execution();
 		
-		return mysql_num_rows($this->result);
+		return is_resource($this->result) ? mysql_affected_rows($this->result) : 0;
 	}
 	
 	/**
@@ -171,8 +181,8 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	function fetch($type=self::DEFAULT_FETCH_TYPE) {
 		$this->assert_execution();
 		
-		if( !$this->result )
-			return self::error('No valid result to fetch from.');
+		if( !is_resource($this->result) )
+			return self::error('Query result is not a resource.');
 		
 		$func = 'mysql_fetch_'.$type;
 		
@@ -191,9 +201,8 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	function fetch_all($type=self::DEFAULT_FETCH_TYPE) {
 		$results = array();
 		
-		while( ($row = $this->fetch($type)) !== false ) {
+		while( ($row = $this->fetch($type)) !== false )
 			$results[] = $row;
-		}
 		
 		return $results;
 		
@@ -288,7 +297,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 */
 	static function mysql_error($query='') {
 		$error = sprintf('MySQL error %d: %s.', mysql_errno(), mysql_error());
-		PQUERY_DEBUG && $error .= "\nQuery: ".$this->query;
+		PQUERY_DEBUG && $error .= "\nQuery: ".$query;
 		
 		self::error($error);
 	}
@@ -303,7 +312,6 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	static function error($error /* [ , $arg1 [ , ... ] ] */) {
 		$args = func_get_args();
 		call_user_func_array('pQuery::error', $args);
-		//parent::error('SQL error %d: %s.', mysql_errno(), mysql_error());
 		
 		return false;
 	}
@@ -318,6 +326,81 @@ class pQuerySql extends pQuery implements pQueryExtension {
 		self::assert_connection();
 		
 		return mysql_real_escape_string($value, self::$link);
+	}
+	
+	/**
+	 * Insert a record in the given table.
+	 * 
+	 * @param string $table The table to insert into.
+	 * @param array $values The values to insert, pointed to by their column names.
+	 * @param bool $escape Whether to escape the values. Defaults to TRUE.
+	 * @returns pQuerySql The created query instance.
+	 */
+	static function insert_row($table, $values, $escape=true) {
+		$columns = array_keys($values);
+		$escape && array_walk($values, 'pQuerySql::escape');
+		
+		return _sql('INSERT INTO `[table]`([columns]) VALUES([values]);')
+			->set_unescaped(array(
+				'table' => $table,
+				'columns' => "`".implode("`, `", $columns)."`",
+				'values' => "'".implode("', '", $values)."'"
+			));
+	}
+	
+	/**
+	 * Delete all record from the given table that match the constraints.
+	 * 
+	 * @param string $table The table to insert into.
+	 * @param array $constraints Column names pointing to their values
+	 * @param bool $escape Whether to escape the constraint values. Defaults to TRUE.
+	 * @returns pQuerySql The created query instance.
+	 */
+	static function delete($table, $constraints, $escape=true) {
+		return _sql('DELETE FROM `[table]` WHERE [constraints];')
+			->set_unescaped(array(
+				'table' => $table,
+				'constraints' => self::parse_constraints($constraints, $escape)
+			));
+	}
+	
+	/**
+	 * Parse a list of constraints.
+	 * 
+	 * @param mixed $constraints One of:
+	 *     - A variable that evaluates as "empty", which will yield the string '1'.
+	 *     - A string, which will be returned unchanged.
+	 *     - A list of column names pointing to their values.
+	 * @param bool $escape Whether to escape the values.
+	 * @returns string The parsed constraints.
+	 */
+	static function parse_constraints($constraints, $escape) {
+		if( empty($constraints) )
+			return "1";
+		
+		if( is_string($constraints) )
+			return $constraints;
+		
+		if( !is_array($constraints) )
+			return self::error('Unknown constraints type.');
+		
+		$conditions = array();
+		
+		foreach( $constraints as $column => $value ) {
+			$condition = "`$column` ";
+			
+			if( is_array($value) ) {
+				$escape && array_walk($value, 'pQuerySql::escape');
+				$condition .= "IN ('".implode("', '", $value)."')";
+			} else {
+				$escape && $value = self::escape($value);
+				$condition .= "= '$value'";
+			}
+			
+			$conditions[] = $condition;
+		}
+		
+		return implode(" AND ", $conditions);
 	}
 }
 
