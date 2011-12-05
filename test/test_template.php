@@ -70,15 +70,21 @@ class pQueryTemplateTest extends UnitTestCase {
 	
 	function test_parse() {
 		// Add some blocks with test variables
+		$this->tpl->data->set('variable', '-variable value-');
+		$object = new StdClass;
+		$object->property = '-object property-';
+		$this->tpl->data->set('object', $object);
+		$this->tpl->data->set('assoc', array('index' => '-assoc index-'));
+		
 		$test1 = $this->tpl->data->add('test1', array('var' => 'some-variable'));
 		$this->tpl->data->add('test1', array('var' => 'some-other-variable'));
 		$test1->add('test2');
 		$this->tpl->data->add('test3');
 		
 		// Expected content is defined in a text file
-		$expected_content = file_get_contents($this->templates_folder.'expect_parse.txt');
+		$expected_content = file_get_contents($this->templates_folder.'expect_parse.html');
 		
-		$this->assertEqual($this->tpl->parse(), $expected_content, 'parsed templated does not match expected content');
+		$this->assertEqual($this->tpl->parse(), $expected_content);
 	}
 }
 

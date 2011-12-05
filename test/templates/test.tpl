@@ -17,7 +17,10 @@ block:test1
 end:test1
 {end}
 
+{variable}
 amet
+{object.property}
+{assoc.index}
 
 {block:test3}
 block:test3

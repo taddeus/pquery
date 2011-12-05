@@ -148,6 +148,9 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 	 * Apply any of the following helper functions:
 	 * - Translation: <code>{_:name[:count_var_name]}</code>
 	 * - Default: <code>{var_name[:func1:func2:...]}</code>
+	 *            'var_name' can be of the form 'foo.bar'. In this case, 'foo' is the
+	 *            name of an object ot associative array variable. 'bar' is a property
+	 *            name to get of the object, or the associative index to the array.
 	 * 
 	 * @param string $variable The variable to replace.
 	 * @param Block $data The data block to search in for the value.
@@ -164,7 +167,18 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 				return '--translation--';
 				break;
 			default:
-				$value = $data->get($name);
+				if( strpos($name, '.') !== false ) {
+					list($object_name, $property) = explode('.', $name, 2);
+					$object = $data->get($object_name);
+					
+					if( is_object($object) && property_exists($object, $property) ) {
+						$value = $object->$property;
+					} elseif( is_array($object) && isset($object[$property]) ) {
+						$value = $object[$property];
+					}
+				} else {
+					$value = $data->get($name);
+				}
 				
 				// Don't continue if the variable name is not foudn in the data block
 				if( $value === null )
