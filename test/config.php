@@ -1,9 +1,4 @@
 <?php
-/**
- * Base and plugin config for pQuery utility framework.
- * 
- * @package pQuery
- */
 
 /**
  * Indicates whether the framework is in debug mode, which right

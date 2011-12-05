@@ -2,7 +2,7 @@
 
 include_once '../../simpletest/autorun.php';
 include_once 'config.php';
-include_once PQUERY_ROOT.'pquery.php';
+include_once '../pquery.php';
 
 function is_test_file($filename) {
 	return preg_match('/^test_\w+\.php$/', $filename);
