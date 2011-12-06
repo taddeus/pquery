@@ -8,6 +8,7 @@
 		<whitelist>
 			<directory>.</directory>
 			<exclude>
+				<directory>utils</directory>
 				<directory>test</directory>
 				<directory>test-old</directory>
 			</exclude>

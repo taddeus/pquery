@@ -9,6 +9,7 @@
 			<directory>..</directory>
 			<exclude>
 				<directory>.</directory>
+				<directory>../utils</directory>
 				<directory>../test-old</directory>
 			</exclude>
 		</whitelist>
