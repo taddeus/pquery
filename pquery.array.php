@@ -12,7 +12,7 @@ class pQueryArray extends pQuery implements pQueryExtension {
 	static $accepts = array('array');
 	
 	/**
-	 * Get the value of an array alement at the given index.
+	 * Get the value of an array element at the given index.
 	 * 
 	 * @param int|string $index The index to get the element of.
 	 * @returns mixed The array value at the given index if it exists, or NULL otherwise.
@@ -31,7 +31,7 @@ class pQueryArray extends pQuery implements pQueryExtension {
 	}
 	
 	/**
-	 * Get the number of elementsin the array.
+	 * Get the number of elements in the array.
 	 * 
 	 * @returns int The number of elements.
 	 */
