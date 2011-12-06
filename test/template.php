@@ -53,7 +53,7 @@ class pQueryTemplateTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function test_constructor() {
-		$this->assertTrue($this->tpl instanceof pQueryTemplate, 'constructor does not return pQueryTemplate object');
+		$this->assertInstanceOf('pQueryTemplate', $this->tpl, 'constructor does not return pQueryTemplate object');
 	}
 	
 	function test_open_template_file() {

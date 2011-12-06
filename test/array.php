@@ -13,7 +13,7 @@ class pQueryArrayTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function test_constructor() {
-		$this->assertTrue($this->arr instanceof pQueryArray, 'constructor does not return pQueryArray object.');
+		$this->assertInstanceOf('pQueryArray', $this->arr, 'constructor does not return pQueryArray object.');
 		$this->assertEquals($this->variable, $this->arr->variable, 'variable is not set correctly.');
 	}
 	

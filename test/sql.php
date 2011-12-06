@@ -55,6 +55,10 @@ class pQuerySqlTest extends PHPUnit_Framework_TestCase {
 		$this->assertNotEquals("select id from foo where bar = 'select id from foo where bar = 'test1''", $sql->query);
 	}
 	
+	function test_constructor() {
+		$this->assertInstanceOf('pQuerySql', _sql("foo"), 'constructor does not return pQuerySql object');
+	}
+	
 	function test_constructor_simple() {
 		$sql = _sql("select id from foo where bar = '[0]'", 'test1');
 		$this->assertEquals("select id from foo where bar = 'test1'", $sql->query);
