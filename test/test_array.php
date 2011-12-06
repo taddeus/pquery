@@ -43,8 +43,14 @@ class pQueryArrayTest extends UnitTestCase {
 		$this->assertEqual($arr->reverse()->variable, $reverse, 'reverse is not really reverse...');
 	}
 	
-	function test_call() {
-		
+	function test_call_count() {
+		$this->assertEqual($this->arr->count(), count($this->variable));
+	}
+	
+	function test_call_sort() {
+		$arr = range(1, 8);
+		shuffle($arr);
+		$this->assertEqual(_arr($arr)->sort()->variable, range(1, 8));
 	}
 }
 

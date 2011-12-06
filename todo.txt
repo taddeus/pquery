@@ -1,5 +1,4 @@
 - Extend array plugin with stack/collection functions.
-- Unit test array plugin
 - Unit test base
 - Unit test cache plugin
 - Unit test css plugin

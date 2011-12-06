@@ -31,6 +31,15 @@ class pQueryArray extends pQuery implements pQueryExtension {
 	}
 	
 	/**
+	 * Get the number of elementsin the array.
+	 * 
+	 * @returns int The number of elements.
+	 */
+	function count() {
+		return count($this->variable);
+	}
+	
+	/**
 	 * Reverse the array.
 	 * 
 	 * @returns pQueryArray The current object.
@@ -58,10 +67,7 @@ class pQueryArray extends pQuery implements pQueryExtension {
 			return call_user_func_array($function, $args);
 		}
 		
-		if( in_array($method, array('count')) )
-			return $method($this->variable);
-		
-		if( in_array($method, array('shuffle')) ) {
+		if( in_array($method, array('shuffle', 'sort')) ) {
 			$method($this->variable);
 			return $this;
 		}
