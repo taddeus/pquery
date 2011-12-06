@@ -59,7 +59,7 @@ class pQueryTemplateTest extends PHPUnit_Framework_TestCase {
 	function test_open_template_file() {
 		$path = $this->templates_folder.$this->file;
 		$content = file_get_contents($path);
-		$this->assertEquals($this->tpl->content, $content, 'template content is not set correctly');
+		$this->assertEquals($content, $this->tpl->content, 'template content was not set correctly');
 	}
 	
 	/**
@@ -85,7 +85,7 @@ class pQueryTemplateTest extends PHPUnit_Framework_TestCase {
 		// Expected content is defined in a text file
 		$expected_content = file_get_contents($this->templates_folder.'expect_parse.html');
 		
-		$this->assertEquals($this->tpl->parse(), $expected_content);
+		$this->assertEquals($expected_content, $this->tpl->parse());
 	}
 }
 

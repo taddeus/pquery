@@ -14,11 +14,11 @@ class pQueryArrayTest extends PHPUnit_Framework_TestCase {
 	
 	function test_constructor() {
 		$this->assertTrue($this->arr instanceof pQueryArray, 'constructor does not return pQueryArray object.');
-		$this->assertEquals($this->arr->variable, $this->variable, 'variable is not set correctly.');
+		$this->assertEquals($this->variable, $this->arr->variable, 'variable is not set correctly.');
 	}
 	
 	function test_get_simple() {
-		$this->assertEquals($this->arr->get(0), $this->variable[0]);
+		$this->assertEquals($this->variable[0], $this->arr->get(0));
 	}
 	
 	function test_get_non_existent() {
@@ -37,17 +37,17 @@ class pQueryArrayTest extends PHPUnit_Framework_TestCase {
 		$orginal = range(1, 4);
 		$reverse = range(4, 1, -1);
 		$arr = _arr($orginal);
-		$this->assertEquals($arr->reverse()->variable, $reverse, 'reverse is not really reverse...');
+		$this->assertEquals($reverse, $arr->reverse()->variable, 'reverse is not really reverse...');
 	}
 	
 	function test_call_count() {
-		$this->assertEquals($this->arr->count(), count($this->variable));
+		$this->assertEquals(count($this->variable), $this->arr->count());
 	}
 	
 	function test_call_sort() {
 		$arr = range(1, 8);
 		shuffle($arr);
-		$this->assertEquals(_arr($arr)->sort()->variable, range(1, 8));
+		$this->assertEquals(range(1, 8), _arr($arr)->sort()->variable);
 	}
 }
 
