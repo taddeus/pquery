@@ -1,14 +1,11 @@
 <?php
 
+include_once 'config.php';
 __p::load_plugin('array');
 
-class pQueryArrayTest extends UnitTestCase {
+class pQueryArrayTest extends PHPUnit_Framework_TestCase {
 	var $variable;
 	var $arr;
-	
-	function __construct() {
-		parent::__construct('pQuery array plugin');
-	}
 	
 	function setUp() {
 		$this->variable = array('test');
@@ -16,12 +13,12 @@ class pQueryArrayTest extends UnitTestCase {
 	}
 	
 	function test_constructor() {
-		$this->assertIsA($this->arr, 'pQueryArray', 'constructor does not return pQueryArray object.');
-		$this->assertEqual($this->arr->variable, $this->variable, 'variable is not set correctly.');
+		$this->assertTrue($this->arr instanceof pQueryArray, 'constructor does not return pQueryArray object.');
+		$this->assertEquals($this->arr->variable, $this->variable, 'variable is not set correctly.');
 	}
 	
 	function test_get_simple() {
-		$this->assertEqual($this->arr->get(0), $this->variable[0]);
+		$this->assertEquals($this->arr->get(0), $this->variable[0]);
 	}
 	
 	function test_get_non_existent() {
@@ -40,17 +37,17 @@ class pQueryArrayTest extends UnitTestCase {
 		$orginal = range(1, 4);
 		$reverse = range(4, 1, -1);
 		$arr = _arr($orginal);
-		$this->assertEqual($arr->reverse()->variable, $reverse, 'reverse is not really reverse...');
+		$this->assertEquals($arr->reverse()->variable, $reverse, 'reverse is not really reverse...');
 	}
 	
 	function test_call_count() {
-		$this->assertEqual($this->arr->count(), count($this->variable));
+		$this->assertEquals($this->arr->count(), count($this->variable));
 	}
 	
 	function test_call_sort() {
 		$arr = range(1, 8);
 		shuffle($arr);
-		$this->assertEqual(_arr($arr)->sort()->variable, range(1, 8));
+		$this->assertEquals(_arr($arr)->sort()->variable, range(1, 8));
 	}
 }
 

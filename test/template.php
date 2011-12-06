@@ -1,16 +1,13 @@
 <?php
 
+include_once 'config.php';
 __p::load_plugin('template');
 
-class pQueryTemplateTest extends UnitTestCase {
+class pQueryTemplateTest extends PHPUnit_Framework_TestCase {
 	const TEMPLATES_FOLDER = 'templates/';
 	var $templates_folder;
 	var $file;
 	var $tpl;
-	
-	function __construct() {
-		parent::__construct('pQuery template plugin');
-	}
 	
 	function setUp() {
 		// Set root to tests/templates
@@ -35,8 +32,10 @@ class pQueryTemplateTest extends UnitTestCase {
 		$this->assertTrue(in_array($folder, __tpl::$include_path), 'folder was not added to include path');
 	}
 	
+	/**
+	 * @expectedException pQueryException
+	 */
 	function test_add_root_failure() {
-		$this->expectException('pQueryException');
 		__tpl::add_root('non_existing_folder');
 	}
 	
@@ -44,27 +43,29 @@ class pQueryTemplateTest extends UnitTestCase {
 		$folder = PQUERY_ROOT.'test/';
 		$folder_relative = 'test/';
 		__tpl::set_root($folder_relative);
-		$this->assertEqual(array($folder), __tpl::$include_path, 'folder was not set as only include path');
+		$this->assertEquals(array($folder), __tpl::$include_path, 'folder was not set as only include path');
 	}
 	
 	function test_set_root_absolute() {
 		$folder = PQUERY_ROOT.'test/';
 		__tpl::set_root($folder, false);
-		$this->assertEqual(array($folder), __tpl::$include_path, 'folder was not set as only include path');
+		$this->assertEquals(array($folder), __tpl::$include_path, 'folder was not set as only include path');
 	}
 	
 	function test_constructor() {
-		$this->assertIsA($this->tpl, 'pQueryTemplate', 'constructor does not return pQueryTemplate object');
+		$this->assertTrue($this->tpl instanceof pQueryTemplate, 'constructor does not return pQueryTemplate object');
 	}
 	
 	function test_open_template_file() {
 		$path = $this->templates_folder.$this->file;
 		$content = file_get_contents($path);
-		$this->assertEqual($this->tpl->content, $content, 'template content is not set correctly');
+		$this->assertEquals($this->tpl->content, $content, 'template content is not set correctly');
 	}
 	
+	/**
+	 * @expectedException pQueryException
+	 */
 	function test_non_existent_file() {
-		$this->expectException('pQueryException');
 		_tpl('non_existent_file.tpl');
 	}
 	
@@ -84,7 +85,7 @@ class pQueryTemplateTest extends UnitTestCase {
 		// Expected content is defined in a text file
 		$expected_content = file_get_contents($this->templates_folder.'expect_parse.html');
 		
-		$this->assertEqual($this->tpl->parse(), $expected_content);
+		$this->assertEquals($this->tpl->parse(), $expected_content);
 	}
 }
 
