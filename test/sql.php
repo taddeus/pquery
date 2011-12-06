@@ -90,6 +90,14 @@ class pQuerySqlTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(__sql::escape_column('count(`foo`)'), 'COUNT(`foo`)');
 	}
 	
+	function test_escape_value() {
+		$this->assertEquals("'foo'", __sql::escape_value("foo"));
+	}
+	
+	function test_escape_value_escaped() {
+		$this->assertEquals("'foo'", __sql::escape_value("'foo'"));
+	}
+	
 	function test_parse_columns_star() {
 		$sql = __sql::select('foo', '*', '', false);
 		$this->assertEquals($sql->query, "SELECT * FROM `foo` WHERE 1;");
