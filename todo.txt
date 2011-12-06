@@ -1,17 +1,6 @@
-- Change config file location.
-- UNIT TESTS!!!
 - Extend array plugin with stack/collection functions.
-- Add unit tests for base and SQL plugin.
-X Create plugin for URL rewriting.
-- Model plugin
-
-// Model brainstorm:
-__model::add_entity('posts', array(
-	'id' => 'int',
-	'name' => 'string',
-	'content' => 'string',
-	'position' => 'int'
-));
-
-// Search query
-$page = _model('posts', "select * from posts where name like '%[0]%'", $_GET['keywords']);
+- Unit test array plugin
+- Unit test base
+- Unit test cache plugin
+- Unit test css plugin
+- Unit test js plugin
