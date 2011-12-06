@@ -294,26 +294,13 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * If a query is specified and debug mode is on, add the query to the error message.
 	 * 
 	 * @param string $query The query that was executed, if any.
+	 * @codeCoverageIgnore
 	 */
 	static function mysql_error($query='') {
 		$error = sprintf('MySQL error %d: %s.', mysql_errno(), mysql_error());
 		PQUERY_DEBUG && $error .= "\nQuery: ".$query;
 		
 		self::error($error);
-	}
-	
-	/**
-	 * Extention of {@link pQuery::error}, returning FALSE (useful in result loops).
-	 * Also, the current query is printed in debug mode.
-	 * 
-	 * @param string $error The error message
-	 * @returns bool FALSE
-	 */
-	static function error($error /* [ , $arg1 [ , ... ] ] */) {
-		$args = func_get_args();
-		call_user_func_array('pQuery::error', $args);
-		
-		return false;
 	}
 	
 	/**
