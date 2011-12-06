@@ -6,22 +6,23 @@
          stopOnError="true">
 	<filter>
 		<whitelist>
-			<directory>..</directory>
+			<directory>.</directory>
 			<exclude>
-				<directory>.</directory>
-				<directory>../test-old</directory>
+				<directory>test</directory>
+				<directory>test-old</directory>
 			</exclude>
 		</whitelist>
 	</filter>
 	<testsuites>
 		<testsuite name="pQuery test suite">
-			<directory suffix=".php">.</directory>
+			<directory suffix=".php">test</directory>
 			<exclude>
-				<file>config.php</file>
+				<directory suffix=".php">test/coverage</directory>
+				<file>test/config.php</file>
 			</exclude>
 		</testsuite>
 	</testsuites>
 	<logging>
-		<log type="coverage-html" target="coverage" charset="UTF-8" highlight="true" />
+		<log type="coverage-html" target="test/coverage" charset="UTF-8" highlight="true" />
 	</logging>
 </phpunit>
