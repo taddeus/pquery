@@ -69,14 +69,6 @@ class pQuerySqlTest extends UnitTestCase {
 		$this->assertEqual($sql->query, "1 2 3 4");
 	}
 	
-	function test_select_simple() {
-		self::set_login_data();
-		$sql = _sql("select bar from foo where id = 1");
-		$result = $sql->fetch('object');
-		$this->assertEqual($result->bar, 'test1');
-		$this->assertIdentical($sql->fetch(), false);
-	}
-	
 	function test_num_rows() {
 		self::set_login_data();
 		$sql = _sql("select bar from foo where id in (1, 2)");
@@ -144,6 +136,11 @@ class pQuerySqlTest extends UnitTestCase {
 		$this->assertEqual($sql->query, "SELECT * FROM `foo` WHERE `bar` = 'test1';");
 	}
 	
+	function test_update_query() {
+		$sql = __sql::update('foo', array('bar' => 'test4'), array('id' => 1), false);
+		$this->assertEqual($sql->query, "UPDATE `foo` SET `bar` = 'test4' WHERE `id` = '1';");
+	}
+	
 	function test_insert_query() {
 		$sql = __sql::insert_row('foo', array('bar' => 'test3'), false);
 		$this->assertEqual($sql->query, "INSERT INTO `foo`(`bar`) VALUES('test3');");
@@ -152,6 +149,29 @@ class pQuerySqlTest extends UnitTestCase {
 	function test_delete_query() {
 		$sql = __sql::delete('foo', array('bar' => 'test3'), false);
 		$this->assertEqual($sql->query, "DELETE FROM `foo` WHERE `bar` = 'test3';");
+	}
+	
+	function test_select() {
+		self::set_login_data();
+		$sql = _sql("select bar from foo where id = 1");
+		$result = $sql->fetch('object');
+		$this->assertEqual($result->bar, 'test1');
+		$this->assertIdentical($sql->fetch(), false);
+	}
+	
+	function test_update() {
+		self::set_login_data();
+		$update = __sql::update('foo', array('bar' => 'test4'),
+			array('id' => 1), false)->execute();
+		
+		// Do not continue unless the value has been updated
+		if( !$this->assertIdentical($update->result, true) )
+			return false;
+		
+		// Chachge the updated record back to its original state
+		$update = __sql::update('foo', array('bar' => 'test1'),
+			array('id' => 1), false)->execute();
+		$this->assertIdentical($update->result, true);
 	}
 	
 	function test_insert_delete() {

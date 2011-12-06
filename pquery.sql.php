@@ -337,10 +337,39 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * @returns pQuerySql The created query instance.
 	 */
 	static function select($table, $columns, $constraints=array(), $escape=true) {
-		return _sql('SELECT [columns] FROM `[table]` WHERE [constraints];')
+		return _sql("SELECT [columns] FROM `[table]` WHERE [constraints];")
 			->set_unescaped(array(
 				'columns' => self::parse_columns($columns),
 				'table' => $table,
+				'constraints' => self::parse_constraints($constraints, $escape)
+			));
+	}
+	
+	/**
+	 * Apply the given changes to all records in the given table that
+	 * match the constraints.
+	 * 
+	 * @param string $table The table to update in.
+	 * @param array $changes Column names pointing to their new values.
+	 * @param array $constraints Column names pointing to their values.
+	 * @param bool $escape Whether to escape the changed values and the
+	 *                     constraint values. Defaults to TRUE.
+	 * @returns pQuerySql The created query instance.
+	 */
+	static function update($table, $changes, $constraints=array(), $escape=true) {
+		// Parse changes
+		$escaped_changes = array();
+		
+		foreach( $changes as $column => $value ) {
+			$column = self::escape_column($column);
+			$value = self::escape_value($value);
+			$escaped_changes[] = "$column = $value";
+		}
+		
+		return _sql("UPDATE `[table]` SET [changes] WHERE [constraints];")
+			->set_unescaped(array(
+				'table' => $table,
+				'changes' => implode(", ", $escaped_changes),
 				'constraints' => self::parse_constraints($constraints, $escape)
 			));
 	}
@@ -355,9 +384,9 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 */
 	static function insert_row($table, $values, $escape=true) {
 		$columns = array_keys($values);
-		$escape && array_walk($values, 'pQuerySql::escape');
+		$escape && $values = array_map('pQuerySql::escape', $values);
 		
-		return _sql('INSERT INTO `[table]`([columns]) VALUES([values]);')
+		return _sql("INSERT INTO `[table]`([columns]) VALUES([values]);")
 			->set_unescaped(array(
 				'table' => $table,
 				'columns' => "`".implode("`, `", $columns)."`",
@@ -374,7 +403,7 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	 * @returns pQuerySql The created query instance.
 	 */
 	static function delete($table, $constraints, $escape=true) {
-		return _sql('DELETE FROM `[table]` WHERE [constraints];')
+		return _sql("DELETE FROM `[table]` WHERE [constraints];")
 			->set_unescaped(array(
 				'table' => $table,
 				'constraints' => self::parse_constraints($constraints, $escape)
@@ -442,6 +471,22 @@ class pQuerySql extends pQuery implements pQueryExtension {
 	}
 	
 	/**
+	 * Escape a value so that it can be saved safely.
+	 * 
+	 * @param string $value The value to escape.
+	 * @returns string The escaped value.
+	 */
+	static function escape_value($value) {
+		if( preg_match("/^'[^']*'$/", $value) ) {
+			// 'value' -> 'value'
+			return $value;
+		}
+		
+		// value -> 'value'
+		return "'$value'";
+	}
+	
+	/**
 	 * Parse a list of constraints.
 	 * 
 	 * @param mixed $constraints One of:
@@ -468,11 +513,12 @@ class pQuerySql extends pQuery implements pQueryExtension {
 			$condition = "`$column` ";
 			
 			if( is_array($value) ) {
-				$escape && array_walk($value, 'pQuerySql::escape');
-				$condition .= "IN ('".implode("', '", $value)."')";
+				$escape && $value = array_map('pQuerySql::escape', $value);
+				$value = array_map('pQuerySql::escape_value', $value);
+				$condition .= "IN (".implode(", ", $value).")";
 			} else {
 				$escape && $value = self::escape($value);
-				$condition .= "= '$value'";
+				$condition .= "= ".self::escape_value($value);
 			}
 			
 			$conditions[] = $condition;
