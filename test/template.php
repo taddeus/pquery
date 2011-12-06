@@ -58,8 +58,7 @@ class pQueryTemplateTest extends PHPUnit_Framework_TestCase {
 	
 	function test_open_template_file() {
 		$path = $this->templates_folder.$this->file;
-		$content = file_get_contents($path);
-		$this->assertEquals($content, $this->tpl->content, 'template content was not set correctly');
+		$this->assertStringEqualsFile($path, $this->tpl->content, 'template content was not set correctly');
 	}
 	
 	/**
