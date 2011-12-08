@@ -9,7 +9,7 @@
  * @todo Documentation
  * @property $query The query that is being evaluated.
  */
-class pQuerySql extends pQuery implements pQueryExtension {
+class pQuerySql extends pQuery {
 	static $accepts = array('string' => 'parse_query', 'resource');
 	
 	/**

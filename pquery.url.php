@@ -9,7 +9,7 @@
  * @todo Documentation
  * @property string $content The template's content.
  */
-class pQueryUrl extends pQuery implements pQueryExtension {
+class pQueryUrl extends pQuery {
 	static $accepts = array('string' => 'parse_url');
 	
 	/**

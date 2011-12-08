@@ -8,7 +8,7 @@
 /**
  * @todo Documentation
  */
-class pQueryArray extends pQuery implements pQueryExtension {
+class pQueryArray extends pQuery {
 	static $accepts = array('array');
 	
 	/**

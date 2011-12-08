@@ -11,7 +11,7 @@ __p::load_utils('CssParser');
 /**
  * @todo Documentation
  */
-class pQueryCss extends pQueryCache implements pQueryExtension {
+class pQueryCss extends pQueryCache {
 	static $accepts = array('array' => 'add_extensions', 'string' => 'make_array');
 	
 	var $minify_config = array(

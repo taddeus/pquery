@@ -11,7 +11,7 @@ __p::load_utils('block');
  * @todo Documentation
  * @property string $content The template's content.
  */
-class pQueryTemplate extends pQuery implements pQueryExtension {
+class pQueryTemplate extends pQuery {
 	const DEFAULT_EXTENSION = 'tpl';
 	
 	static $accepts = array('string' => 'open_template_file');

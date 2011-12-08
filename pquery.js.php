@@ -11,7 +11,7 @@ __p::load_utils('jshrink');
 /**
  * @todo Documentation
  */
-class pQueryJs extends pQueryCache implements pQueryExtension {
+class pQueryJs extends pQueryCache {
 	static $accepts = array('array' => 'add_extensions', 'string' => 'make_array');
 	
 	/**

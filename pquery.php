@@ -302,16 +302,6 @@ class pQueryException extends Exception {
 }
 
 /**
- * Interface used for extending the jQuery class.
- */
-interface pQueryExtension {
-	/**
-	 * 
-	 */
-	
-}
-
-/**
  * Shortcut constructor for {@link pQuery}.
  * 
  * @param mixed $variable The variable to use an utility on.

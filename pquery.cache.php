@@ -9,7 +9,7 @@
  * @todo Documentation
  * @property string $files 
  */
-class pQueryCache extends pQuery implements pQueryExtension {
+class pQueryCache extends pQuery {
 	const CACHE_FOLDER = 'cache/';
 	const ADMINISTRATION_FILE = 'administration.php';
 	
