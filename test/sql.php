@@ -172,8 +172,6 @@ class pQuerySqlTest extends PHPUnit_Framework_TestCase {
 	function test_update() {
 		$update = __sql::update('foo', array('bar' => 'test1'),
 			array('id' => 1), false)->execute();
-		
-		// Do not continue unless the value has been updated
 		$this->assertTrue($update->result);
 	}
 	
