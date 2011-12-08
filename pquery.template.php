@@ -76,7 +76,9 @@ class pQueryTemplate extends pQuery implements pQueryExtension {
 		
 		self::error("Could not find template file \"%s\", looked in folders:\n%s",
 			$filename, implode("\n", self::$include_path));
+		// @codeCoverageIgnoreStart
 	}
+	// @codeCoverageIgnoreEnd
 	
 	/**
 	 * Replace blocks and variables in the template's content.
