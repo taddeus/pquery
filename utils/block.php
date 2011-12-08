@@ -71,19 +71,6 @@ class Block {
 	}
 	
 	/**
-	 * Add a child block.
-	 * 
-	 * @param string $name The name of the block to add.
-	 * @param array $data Data to add to the created block (optional).
-	 * @returns Block The created block.
-	 */
-	function add($name, $data=array()) {
-		array_push($this->children, $block = new self($name, $this));
-		
-		return $block->set($data);
-	}
-	
-	/**
 	 * Set the value of one or more variables in the block.
 	 * 
 	 * @param string|array $vars  Either a single variable name, or a set of name/value pairs.
@@ -103,18 +90,6 @@ class Block {
 	/**
 	 * Get the value of a variable.
 	 * 
-	 * This method is an equivalent of {@link get()}.
-	 * 
-	 * @param string $name The name of the variable to get the value of.
-	 * @return mixed The value of the variable if it exists, NULL otherwise.
-	 */
-	function __get($name) {
-		return $this->get($name);
-	}
-	
-	/**
-	 * Get the value of a variable.
-	 * 
 	 * @param string $name The name of the variable to get the value of.
 	 * @return mixed The value of the variable if it exists, NULL otherwise.
 	 */
@@ -129,6 +104,31 @@ class Block {
 		
 		// If the tree's root block does not have the variable, it does not exist
 		return null;
+	}
+	
+	/**
+	 * Get the value of a variable.
+	 * 
+	 * This method is an equivalent of {@link get()}.
+	 * 
+	 * @param string $name The name of the variable to get the value of.
+	 * @return mixed The value of the variable if it exists, NULL otherwise.
+	 */
+	function __get($name) {
+		return $this->get($name);
+	}
+	
+	/**
+	 * Add a child block.
+	 * 
+	 * @param string $name The name of the block to add.
+	 * @param array $data Data to add to the created block (optional).
+	 * @returns Block The created block.
+	 */
+	function add($name, $data=array()) {
+		array_push($this->children, $block = new self($name, $this));
+		
+		return $block->set($data);
 	}
 	
 	/**
