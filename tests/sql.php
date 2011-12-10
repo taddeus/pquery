@@ -156,14 +156,64 @@ class pQuerySqlTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals("DELETE FROM `foo` WHERE `bar` = 'test3';", $sql->query);
 	}
 	
-	/**
-	 * @depends test_select_query
-	 */
-	function test_select() {
+	function test_fetch_assoc() {
+		$sql = _sql("select bar from foo where id = 1");
+		$result = $sql->fetch('assoc');
+		$this->assertEquals(array('bar' => 'test1'), $result);
+		$this->assertFalse($sql->fetch());
+	}
+	
+	function test_fetch_array() {
+		$sql = _sql("select bar from foo where id = 1");
+		$result = $sql->fetch('array');
+		$this->assertEquals(array(0 => 'test1', 'bar' => 'test1'), $result);
+		$this->assertFalse($sql->fetch());
+	}
+	
+	function test_fetch_object() {
 		$sql = _sql("select bar from foo where id = 1");
 		$result = $sql->fetch('object');
 		$this->assertEquals('test1', $result->bar);
 		$this->assertFalse($sql->fetch());
+	}
+	
+	/**
+	 * @depends test_fetch_assoc
+	 */
+	function test_fetch_all() {
+		$sql = _sql("select bar from foo where id = 1");
+		$results = $sql->fetch_all('assoc');
+		$this->assertEquals(array(array('bar' => 'test1')), $results);
+	}
+	
+	/*
+	 * @depends test_select_query
+	 * @depends test_fetch_assoc
+	 */
+	function test_select_all() {
+		$select = __sql::select('foo', '*', array('bar' => 'test1'))->execute();
+		$result = $select->fetch('assoc');
+		$this->assertEquals(array('id' => 1, 'bar' => 'test1'), $result);
+	}
+	
+	/*
+	 * @depends test_select_query
+	 * @depends test_fetch_assoc
+	 */
+	function test_select_single() {
+		$select = __sql::select('foo', 'bar', array('bar' => 'test1'))->execute();
+		$result = $select->fetch('assoc');
+		$this->assertEquals(array('bar' => 'test1'), $result);
+	}
+	
+	/*
+	 * @depends test_select_query
+	 * @depends test_fetch_assoc
+	 */
+	function test_select_multiple() {
+		$select = __sql::select('foo', array('id', 'bar'), array('bar' => 'test1'))->execute();
+		$result = $select->fetch('assoc');
+		$this->assertEquals(array('id' => 1, 'bar' => 'test1'), $result);
 	}
 	
 	/**
