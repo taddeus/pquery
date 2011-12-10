@@ -169,7 +169,7 @@ class pQuerySql extends pQuery {
 	function affected_rows() {
 		$this->assert_execution();
 		
-		return is_resource($this->result) ? mysql_affected_rows($this->result) : 0;
+		return mysql_affected_rows(self::$link);
 	}
 	
 	/**

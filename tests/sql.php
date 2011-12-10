@@ -181,6 +181,7 @@ class pQuerySqlTest extends PHPUnit_Framework_TestCase {
 	function test_insert() {
 		$insert = __sql::insert_row('foo', array('bar' => 'test3'))->execute();
 		$this->assertTrue($insert->result);
+		$this->assertEquals(1, $insert->affected_rows());
 	}
 	
 	/**
@@ -190,7 +191,7 @@ class pQuerySqlTest extends PHPUnit_Framework_TestCase {
 	function test_delete() {
 		$delete = __sql::delete('foo', array('bar' => 'test3'))->execute();
 		$this->assertTrue($delete->result);
-		$this->assertEquals($delete->affected_rows());
+		$this->assertEquals(1, $delete->affected_rows());
 	}
 }
 
