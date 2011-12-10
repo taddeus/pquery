@@ -11,7 +11,7 @@ class pQueryTemplateTest extends PHPUnit_Framework_TestCase {
 	
 	function setUp() {
 		// Set root to tests/templates
-		$this->templates_folder = PQUERY_ROOT.'test/'.self::TEMPLATES_FOLDER;
+		$this->templates_folder = PQUERY_ROOT.'tests/'.self::TEMPLATES_FOLDER;
 		__tpl::set_root($this->templates_folder, false);
 		
 		// Load the test template
@@ -20,14 +20,14 @@ class pQueryTemplateTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function test_add_root_relative() {
-		$folder = PQUERY_ROOT.'test/';
-		$folder_relative = 'test/';
+		$folder = PQUERY_ROOT.'tests/';
+		$folder_relative = 'tests/';
 		__tpl::add_root($folder_relative);
 		$this->assertTrue(in_array($folder, __tpl::$include_path), 'folder was not added to include path');
 	}
 	
 	function test_add_root_absolute() {
-		$folder = PQUERY_ROOT.'test/';
+		$folder = PQUERY_ROOT.'tests/';
 		__tpl::add_root($folder, false);
 		$this->assertTrue(in_array($folder, __tpl::$include_path), 'folder was not added to include path');
 	}
@@ -40,14 +40,14 @@ class pQueryTemplateTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function test_set_root_relative() {
-		$folder = PQUERY_ROOT.'test/';
-		$folder_relative = 'test/';
+		$folder = PQUERY_ROOT.'tests/';
+		$folder_relative = 'tests/';
 		__tpl::set_root($folder_relative);
 		$this->assertEquals(array($folder), __tpl::$include_path, 'folder was not set as only include path');
 	}
 	
 	function test_set_root_absolute() {
-		$folder = PQUERY_ROOT.'test/';
+		$folder = PQUERY_ROOT.'tests/';
 		__tpl::set_root($folder, false);
 		$this->assertEquals(array($folder), __tpl::$include_path, 'folder was not set as only include path');
 	}

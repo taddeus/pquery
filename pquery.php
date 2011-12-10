@@ -164,8 +164,8 @@ class pQuery {
 			return self::error('Plugin "%s" does not exist.', $class_name);
 		
 		// Assert that the plugin extend the base clas properly
-		if( !in_array('pQueryExtension', class_implements($class_name)) )
-			return self::error('Plugin "%s" does not implement pQueryExtension.', $class_name);
+		if( !is_subclass_of($class_name, 'pQuery') )
+			return self::error('Plugin class "%s" does not extend pQuery.', $class_name);
 		
 		// Assert that the required PHP version is installed
 		if( isset($class_name::$REQUIRED_PHP_VERSION)
