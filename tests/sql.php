@@ -190,6 +190,7 @@ class pQuerySqlTest extends PHPUnit_Framework_TestCase {
 	function test_delete() {
 		$delete = __sql::delete('foo', array('bar' => 'test3'))->execute();
 		$this->assertTrue($delete->result);
+		$this->assertEquals($delete->affected_rows());
 	}
 }
 
