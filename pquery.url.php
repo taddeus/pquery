@@ -35,20 +35,6 @@ class pQueryUrl extends pQuery {
 	}
 	
 	/**
-	 * Execute the handler of the first matching URL regex.
-	 * 
-	 * @param string $path The path to add.
-	 * @param bool $relative Indicates whether the path is relative to the document root.
-	 */
-	function handler() {
-		foreach( self::$handlers as $pattern => $handler )
-			if( preg_match($pattern, $this->url, $matches) )
-				return call_user_func_array($handler, array_slice($matches, 1));
-		
-		//self::error('URL has no handler.', $this->url);
-	}
-	
-	/**
 	 * Add a handler function to a URL match.
 	 * 
 	 * @param string $pattern The URL pattern to match.
@@ -68,6 +54,22 @@ class pQueryUrl extends pQuery {
 		foreach( $handlers as $pattern => $handler )
 			self::add_handler($pattern, $handler);
 	}
+	
+	/**
+	 * Execute the handler of the first matching URL regex.
+	 * 
+	 * @param string $path The path to add.
+	 * @param bool $relative Indicates whether the path is relative to the document root.
+	 */
+	function handler() {
+		foreach( self::$handlers as $pattern => $handler )
+			if( preg_match($pattern, $this->url, $matches) )
+				return call_user_func_array($handler, array_slice($matches, 1));
+		
+		self::error('URL "%s" has no handler.', $this->url);
+		// @codeCoverageIgnoreStart
+	}
+	// @codeCoverageIgnoreEnd
 }
 
 /**
