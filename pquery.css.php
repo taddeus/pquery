@@ -1,6 +1,7 @@
 <?php
 /**
- * pQuery plugin for parsing templates.
+ * pQuery plugin for composing sets of CSS stylesheets.
+ * The plugin has built-in cache control and uses the CssParser class.
  * 
  * @package pQuery
  */
@@ -9,7 +10,7 @@ __p::require_plugins('cache');
 __p::load_utils('CssParser');
 
 /**
- * @todo Documentation
+ * pQuery extension class for the 'css' plugin.
  */
 class pQueryCss extends pQueryCache {
 	static $accepts = array('array' => 'add_extensions', 'string' => 'make_array');

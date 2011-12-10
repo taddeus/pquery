@@ -1,13 +1,15 @@
 <?php
 /**
- * pQuery plugin for parsing templates.
+ * pQuery plugin for cache-control of a list of files.
  * 
  * @package pQuery
  */
 
 /**
- * @todo Documentation
- * @property string $files 
+ * pQuery extension class for the 'cache' plugin.
+ * 
+ * @property string $files The list of files in the cached object.
+ * @todo Method documentation
  */
 class pQueryCache extends pQuery {
 	const CACHE_FOLDER = 'cache/';

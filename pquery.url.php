@@ -1,13 +1,14 @@
 <?php
 /**
- * pQuery plugin for parsing templates.
+ * pQuery plugin for parsing URL's and calling corresponding handlers.
  * 
  * @package pQuery
  */
 
 /**
- * @todo Documentation
- * @property string $content The template's content.
+ * pQuery extension class for the 'url' plugin.
+ * 
+ * @property string $url The current url, with slashes removed at begin and end.
  */
 class pQueryUrl extends pQuery {
 	static $accepts = array('string' => 'parse_url');
@@ -19,9 +20,12 @@ class pQueryUrl extends pQuery {
 	static $variable_alias = 'url';
 	
 	/**
+	 * The current set of handlers, pointed to by regular expression patterns.
 	 * 
+	 * The handler that is called for the current URL is the one corresponding
+	 * to the first pattern in this list that matches the URL.
 	 * 
-	 * @var string
+	 * @var array
 	 */
 	static $handlers = array();
 	

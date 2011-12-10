@@ -1,12 +1,13 @@
 <?php
 /**
- * pQuery plugin for executing common array functions.
+ * pQuery plugin for easily executing practical functions on arrays, in a
+ * more object-oriented manner than natively supported by PHP.
  * 
  * @package pQuery
  */
 
 /**
- * @todo Documentation
+ * pQuery extension class for the 'array' plugin.
  */
 class pQueryArray extends pQuery {
 	static $accepts = array('array');

@@ -6,7 +6,8 @@
  */
 
 /**
- * @todo Documentation
+ * pQuery extension class for the 'sql' plugin.
+ * 
  * @property $query The query that is being evaluated.
  */
 class pQuerySql extends pQuery {

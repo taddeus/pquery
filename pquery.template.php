@@ -8,7 +8,8 @@
 __p::load_utils('block');
 
 /**
- * @todo Documentation
+ * pQuery extension class for the 'tpl' plugin.
+ * 
  * @property string $content The template's content.
  */
 class pQueryTemplate extends pQuery {

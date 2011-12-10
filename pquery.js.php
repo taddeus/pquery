@@ -1,6 +1,7 @@
 <?php
 /**
- * pQuery plugin for parsing templates.
+ * pQuery plugin for composing sets of JavaScript files.
+ * The plugin has built-in cache control and supports the JShrink minifier.
  * 
  * @package pQuery
  */
@@ -9,7 +10,7 @@ __p::require_plugins('cache');
 __p::load_utils('jshrink');
 
 /**
- * @todo Documentation
+ * pQuery extension class for the 'js' plugin.
  */
 class pQueryJs extends pQueryCache {
 	static $accepts = array('array' => 'add_extensions', 'string' => 'make_array');
