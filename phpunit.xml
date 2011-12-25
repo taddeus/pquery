@@ -8,8 +8,7 @@
 		<whitelist>
 			<directory>.</directory>
 			<exclude>
-				<directory>test</directory>
-				<directory>test-old</directory>
+				<directory>tests</directory>
 				<file>utils/jshrink.php</file>
 				<file>utils/minify_html.php</file>
 			</exclude>
@@ -17,14 +16,14 @@
 	</filter>
 	<testsuites>
 		<testsuite name="pQuery test suite">
-			<directory suffix=".php">test</directory>
+			<directory suffix=".php">tests</directory>
 			<exclude>
-				<directory suffix=".php">test/coverage</directory>
-				<file>test/config.php</file>
+				<directory suffix=".php">tests/coverage</directory>
+				<file>tests/config.php</file>
 			</exclude>
 		</testsuite>
 	</testsuites>
 	<logging>
-		<log type="coverage-html" target="test/coverage" charset="UTF-8" highlight="true" />
+		<log type="coverage-html" target="tests/coverage" charset="UTF-8" highlight="true" />
 	</logging>
 </phpunit>
