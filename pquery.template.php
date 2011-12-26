@@ -204,8 +204,8 @@ class pQueryTemplate extends pQuery {
 	/**
 	 * Parse a single block, recursively parsing its sub-blocks with a given data scope.
 	 * 
-	 * @param Block $variable The block to parse.
-	 * @param Block $data the data block to search in for the variable values.
+	 * @param Block $block The block to parse.
+	 * @param Block $data The data block to search in for the variable values.
 	 * @returns string The parsed block.
 	 * @uses parse_variable
 	 */
