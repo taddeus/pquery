@@ -47,6 +47,17 @@ class pQueryCss extends pQueryCache {
 	
 	/**
 	 * 
+	 * 
+	 * @param array $override 
+	 */
+	function set_config($override) {
+		$this->minify_config = array_merge($this->minify_config, $override);
+		
+		return $this;
+	}
+	
+	/**
+	 * 
 	 */
 	function minify() {
 		$this->content = CssParser::minify($this->content, $this->minify_config);
