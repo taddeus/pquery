@@ -276,18 +276,14 @@ class pQuery {
 	
 	/**
 	 * Assert that the given constants have been defined.
-	 * Add the prefix 'PQUERY_' to each constant name.
 	 */
 	static function assert_defined(/* $constant1 [ , $constant2, ... ] */) {
 		$constants = func_get_args();
 		$undefined = array();
 		
-		foreach( $constants as $constant ) {
-			$constant = 'PQUERY_'.$constant;
-			
+		foreach( $constants as $constant )
 			if( !defined($constant) )
 				$undefined[] = $constant;
-		}
 		
 		count($undefined) && self::error('The following constants have'
 			.' not been defined: %s', implode(', ', $undefined));
@@ -338,6 +334,6 @@ class_alias('pQuery', '__p');
  */
 set_exception_handler('__p::exception_handler');
 
-__p::assert_defined('DEBUG', 'ROOT');
+__p::assert_defined('PQUERY_DEBUG', 'PQUERY_ROOT', 'SITE_ROOT');
  
 ?>

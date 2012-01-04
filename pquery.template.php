@@ -251,7 +251,7 @@ class pQueryTemplate extends pQuery {
 	 * @param bool $relative Indicates whether the path is relative to the document root.
 	 */
 	static function add_root($path, $relative=true) {
-		$relative && $path = PQUERY_ROOT.$path;
+		$relative && $path = SITE_ROOT.$path;
 		preg_match('%/$%', $path) || $path .= '/';
 		
 		if( !is_dir($path) )
