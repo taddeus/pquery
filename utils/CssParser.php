@@ -147,6 +147,10 @@ class CssNode {
 	}
 	
 	function compress($value, $rule) {
+		// Double rule names
+		if( preg_match('/^([^#]+)#\d+$/', $rule, $m) )
+			$rule = $m[1];
+		
 		// Compress colors
 		if( self::$config['compress_colors'] && preg_match('/color$/', $rule) )
 			$value = self::compress_color($value);
@@ -177,8 +181,16 @@ class CssNode {
 		foreach( preg_split('/\s*;\s*/', trim($rules)) as $rule ) {
 			$split = preg_split('/\s*:\s*/', $rule, 2);
 			
-			if( count($split) == 2 && strlen($split[0]) && strlen($split[1]) )
-				$this->rules[$split[0]] = $split[1];
+			if( count($split) == 2 && strlen($split[0]) && strlen($split[1]) ) {
+				list($name, $value) = $split;
+				$i = 1;
+				
+				// Double rule names
+				while( isset($this->rules[$name]) )
+					$name .= '#'.($i++);
+				
+				$this->rules[$name] = $value;
+			}
 		}
 	}
 	
@@ -206,7 +218,7 @@ class CssNode {
 					$selector = $current_node->selector.($self ? '' : ' ').$child_selectors;
 				}
 				
-				$current_node = $current_node->children[] = new CssNode($selector, $m[2], $current_node);
+				$current_node = $current_node->children[] = new CssNode($selector, '', $current_node);
 				$line = $m[2];
 			}
 			
