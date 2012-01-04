@@ -108,7 +108,7 @@ class pQueryCache extends pQuery {
 		header('Cache-Control: private');
 		method_exists($this, 'set_headers') && $this->set_headers();
 		
-		if( $admin_updated = $this->admin_updated() || !isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ) {
+		if( ($admin_updated = $this->admin_updated()) || !isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ) {
 			$this->save();
 		} elseif( isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ) {
 			$if_modified_since = strtotime(preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']));
