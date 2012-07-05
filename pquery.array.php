@@ -63,7 +63,7 @@ class pQueryArray extends pQuery {
 		$function = 'array_'.$method;
 		
 		if( function_exists($function) ) {
-			array_unshift($args, &$this->variable);
+			array_unshift($args, $this->variable);
 			
 			return call_user_func_array($function, $args);
 		}
