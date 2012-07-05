@@ -144,7 +144,7 @@ class pQuery {
 	 * 
 	 * @param Exception $e The exception to handle.
 	 */
-	function exception_handler($e) {
+	static function exception_handler($e) {
 		if( $e instanceof pQueryException )
 			die(nl2br($e->getMessage()));
 		
@@ -335,5 +335,5 @@ class_alias('pQuery', '__p');
 set_exception_handler('__p::exception_handler');
 
 __p::assert_defined('PQUERY_DEBUG', 'PQUERY_ROOT', 'SITE_ROOT');
- 
+
 ?>
