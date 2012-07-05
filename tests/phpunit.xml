@@ -8,7 +8,6 @@
 		<whitelist>
 			<directory>..</directory>
 			<exclude>
-				<directory>.</directory>
 				<file>../utils/jshrink.php</file>
 				<file>../utils/minify_html.php</file>
 			</exclude>
