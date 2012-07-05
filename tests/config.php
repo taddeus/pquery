@@ -16,6 +16,8 @@ define('PQUERY_DEBUG', true);
  */
 define('PQUERY_ROOT', 'D:/xampp/htdocs/pquery/');
 
+define('SITE_ROOT', 'D:/xampp/htdocs/pquery/');
+
 include_once PQUERY_ROOT.'pquery.php';
 
 ?>
