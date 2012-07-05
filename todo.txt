@@ -1,5 +1,5 @@
-- Extend array plugin with stack/collection functions.
-- Unit test base
-- Unit test cache plugin
-- Unit test css plugin
-- Unit test js plugin
+- Rewrite 'array' plugin to 'set' with stack/collection functions.
+- Use spl_autoload_register for autoloading.
+- Unit test pQuery base class.
+- Unit test cache/css/js plugins.
+- Add bare-bone generation script.
