@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+	<title>pQuery documentation</title>
+	<parser>
+		<default-package-name>blabla</default-package-name>
+		<target>docs</target>
+	</parser>
+	<transformer>
+		<target>docs</target>
+	</transformer>
+	<files>
+		<directory>.</directory>
+		<ignore>utils/jshrink.php</ignore>
+		<ignore>utils/minify_html.php</ignore>
+		<ignore>tests/*</ignore>
+	</files>
+</phpdoc>
